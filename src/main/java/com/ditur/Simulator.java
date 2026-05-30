@@ -19,6 +19,20 @@ import javafx.util.Duration;
 
 public class Simulator extends Application {
 
+    /*
+        TODO:
+            - add random method to generate randomly crops to all cells
+            - add Agents abstract class
+            - add Farmer class
+            - add Bee class
+            - add Pest class
+            - Pesticide class for Farmer
+            - Harvest class for Farmer
+            - Optional class for drawing UI
+            - GRAPHS !!!!
+            - Repair slider speed !!!
+     */
+
     private Board board;
     private Canvas canvas;
     private Timeline timeline;
@@ -31,13 +45,14 @@ public class Simulator extends Application {
     private Label lblTicks;
     private Label lblCrops;
 
-    private static final int CELL_SIZE = 25; // Size of one field in pixels
+    private static final int CELL_SIZE = 35; // Size of one field in pixels
 
     @Override
     public void start(Stage stage) {
         // 1. Board init
         board = new Board(20, 20);
 
+        // TODO: method for randomly fill board
         board.getField(2, 2).setCrop(CropType.CARROT);
         board.getField(5, 5).setCrop(CropType.POTATO);
         board.getField(8, 3).setCrop(CropType.WHEAT);
@@ -94,7 +109,7 @@ public class Simulator extends Application {
         btnStart.setOnAction(e -> timeline.play());
         btnPause.setOnAction(e -> timeline.pause());
 
-        // simulation speed slider
+        // Simulation speed slider
         speedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             boolean wasRunning = timeline.getStatus() == Animation.Status.RUNNING;
             timeline.stop();
@@ -124,14 +139,14 @@ public class Simulator extends Application {
         tickCount++;
         lblTicks.setText("Simulation step: " + tickCount);
 
-        // We go through all the fields on the board and update their logical states
+        // Go through all the fields on the board and update their logical states
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 board.getField(x, y).updateState();
             }
         }
 
-        // After updating the logical data, we draw the image again
+        // After updating the logical data draw the image again
         renderBoard();
     }
 
