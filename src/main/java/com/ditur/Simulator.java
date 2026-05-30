@@ -1,5 +1,8 @@
 package com.ditur;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -12,11 +15,22 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Simulator extends Application {
 
     private Board board;
     private Canvas canvas;
+    private Timeline timeline;
+
+    // Simulation counters
+    private int tickCount = 0;
+    private int harvestedCrops = 0;
+
+    // UI components
+    private Label lblTicks;
+    private Label lblCrops;
+
     private static final int CELL_SIZE = 25; // Size of one field in pixels
 
     @Override
@@ -27,8 +41,9 @@ public class Simulator extends Application {
         board.getField(2, 2).setCrop(CropType.CARROT);
         board.getField(5, 5).setCrop(CropType.POTATO);
         board.getField(8, 3).setCrop(CropType.WHEAT);
+        board.getField(10, 10).setCrop(CropType.POTATO);
 
-        // 2. Left side of Simulator (Controllers)
+        // 2. Left side of Simulator
         VBox leftPanel = new VBox(15); // Space between elements
         leftPanel.setPadding(new Insets(15));
         leftPanel.setPrefWidth(220);
@@ -49,8 +64,9 @@ public class Simulator extends Application {
 
         Label statsLabel = new Label("STATISTICS:");
         statsLabel.setStyle("-fx-font-weight: bold; -fx-padding: 10 0 0 0;");
-        Label lblTicks = new Label("Simulation step: 0");
-        Label lblCrops = new Label("Harvested crops: 0");
+
+        lblTicks = new Label("Simulation step: 0");
+        lblCrops = new Label("Harvested crops: 0");
 
         // Add elements to left panel side
         leftPanel.getChildren().addAll(titleLabel, btnStart, btnPause, speedLabel, speedSlider, statsLabel, lblTicks, lblCrops);
@@ -64,9 +80,36 @@ public class Simulator extends Application {
         canvasContainer.setPadding(new Insets(10));
         canvasContainer.setStyle("-fx-background-color: #2B2B2B;");
 
-        // 4. Main container
         HBox mainLayout = new HBox(leftPanel, canvasContainer);
 
+        // 4. Clock configurations
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(speedSlider.getValue()), event -> {
+            performSimulationStep();
+        });
+
+        timeline = new Timeline(keyFrame);
+        timeline.setCycleCount(Animation.INDEFINITE); // Simulation endless loop
+
+        // 5. Event handling
+        btnStart.setOnAction(e -> timeline.play());
+        btnPause.setOnAction(e -> timeline.pause());
+
+        // simulation speed slider
+        speedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            boolean wasRunning = timeline.getStatus() == Animation.Status.RUNNING;
+            timeline.stop();
+
+            KeyFrame newFrame = new KeyFrame(Duration.millis(newValue.doubleValue()), event -> {
+                performSimulationStep();
+            });
+            timeline.getKeyFrames().setAll(newFrame);
+
+            if (wasRunning) {
+                timeline.play();
+            }
+        });
+
+        // Render empty board
         renderBoard();
 
         // 6. WINDOW LAUNCH
@@ -77,6 +120,21 @@ public class Simulator extends Application {
         stage.show();
     }
 
+    private void performSimulationStep() {
+        tickCount++;
+        lblTicks.setText("Simulation step: " + tickCount);
+
+        // We go through all the fields on the board and update their logical states
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                board.getField(x, y).updateState();
+            }
+        }
+
+        // After updating the logical data, we draw the image again
+        renderBoard();
+    }
+
     private void renderBoard() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -84,17 +142,26 @@ public class Simulator extends Application {
             for (int y = 0; y < board.getHeight(); y++) {
                 Field field = board.getField(x, y);
 
-                // We choose the color of the field depending on what is growing in it
-                if (field.getFieldState().equals("growing") || field.getFieldState().equals("maturely")) {
+                if (field.getFieldState().equals("growing")) {
                     switch (field.getCropType()) {
-                        case CARROT -> gc.setFill(Color.ORANGE);
-                        case POTATO -> gc.setFill(Color.BROWN);
-                        case WHEAT -> gc.setFill(Color.GOLD);
+                        case CARROT -> gc.setFill(Color.web("#D27613")); // pomaranczowy
+                        case POTATO -> gc.setFill(Color.web("#8A624A")); // jasny braz
+                        case WHEAT -> gc.setFill(Color.web("#D1BC6A"));  // zloto
                         default -> gc.setFill(Color.DARKGREEN);
                     }
+                } else if (field.getFieldState().equals("maturely") || field.getFieldState().equals("mature")) {
+                    switch (field.getCropType()) {
+                        case CARROT -> gc.setFill(Color.ORANGE);
+                        case POTATO -> gc.setFill(Color.web("#5C4033")); // ciemny, brąz
+                        case WHEAT -> gc.setFill(Color.GOLD);
+                        default -> gc.setFill(Color.GREEN);
+                    }
                 } else {
-                    // Empty field color
-                    gc.setFill(Color.web("#557A46"));
+                    if (field.getHydrationLevel() > 0) {
+                        gc.setFill(Color.web("#557A46")); // zielen/gleba
+                    } else {
+                        gc.setFill(Color.web("#A0A2A0")); // wysuszona, szara ziemia
+                    }
                 }
 
                 // Draw a square field
