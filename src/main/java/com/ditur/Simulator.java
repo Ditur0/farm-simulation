@@ -21,6 +21,7 @@ public class Simulator extends Application {
     /*
         TODO:
             - add random method to generate randomly crops to all cells
+            - add better colors for crops and field and optimal growing time
             - add Farmer class
             - add Pest class
             - Pesticide class for Farmer
