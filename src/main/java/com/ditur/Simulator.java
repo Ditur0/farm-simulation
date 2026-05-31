@@ -1,6 +1,7 @@
 package com.ditur;
 
 import com.ditur.builder.Agent;
+import com.ditur.builder.AgentFactory;
 import com.ditur.builder.Bee;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -29,15 +30,20 @@ public class Simulator extends Application {
     /*
         TODO:
             - add random method to generate randomly crops to all cells
-            - add Agents abstract class
             - add Farmer class
-            - add Bee class
             - add Pest class
             - Pesticide class for Farmer
             - Harvest class for Farmer
             - Optional class for drawing UI
             - GRAPHS !!!!
             - Repair slider speed !!!
+     */
+
+    /*
+        DONE:
+            - add Agents abstract class
+            - add Bee class
+            - add agents builder factory class
      */
 
     private Board board;
@@ -100,24 +106,25 @@ public class Simulator extends Application {
         Button btnSpawnBees = new Button("Spawn Bees");
         btnSpawnBees.setMaxWidth(Double.MAX_VALUE);
 
-        // Akcja po kliknięciu przycisku generowania pszczół
+        // Action after clicking the bee generation button
         btnSpawnBees.setOnAction(e -> {
             try {
                 int count = Integer.parseInt(tfBeeCount.getText());
                 for (int i = 0; i < count; i++) {
-                    Bee newBee = new Bee.BeeBuilder()
-                            .setId(agents.size())
-                            .setX(random.nextInt(board.getWidth()))
-                            .setY(random.nextInt(board.getHeight()))
-                            .setBoard(board)
-                            .setEnergy(100)
-                            .setName("Bee " + i)
-                            .build();
+
+                    Bee newBee = AgentFactory.createBee(
+                            agents.size(),
+                            random.nextInt(board.getWidth()),
+                            random.nextInt(board.getHeight()),
+                            board,
+                            "Bee " + i
+                    );
+
                     agents.add(newBee);
                 }
-                renderBoard(); // Przerysuj, by natychmiast zobaczyć zmiany
+                renderBoard();
             } catch (NumberFormatException ex) {
-                tfBeeCount.setText("Wpisz cyfrę!");
+                tfBeeCount.setText("Enter a number!");
             }
         });
 
@@ -184,15 +191,15 @@ public class Simulator extends Application {
             }
         }
 
-        // Wykonaj krok dla każdego żywego agenta
+        // Step for every living agent
         for (int i = agents.size() - 1; i >= 0; i--) {
             Agent a = agents.get(i);
             a.step();
 
-            // Jeśli pszczoła zginęła przez pestycyd, usuń ją z listy
-            if (a instanceof Bee && ((Bee) a).isDead()) {
-                agents.remove(i);
-            }
+            // If bee is dead remove from list OPTIONAL
+//            if (a instanceof Bee && ((Bee) a).isDead()) {
+//                agents.remove(i);
+//            }
         }
 
         // After updating the logical data draw the image again
@@ -237,13 +244,12 @@ public class Simulator extends Application {
             }
         }
 
-        // Rysowanie pszczół na planszy jako małe żółte kółka
+        // Drawing bees on the board as small yellow circles
         for (Agent a : agents) {
             if (a instanceof Bee) {
                 gc.setFill(Color.YELLOW);
                 gc.setStroke(Color.BLACK);
                 gc.setLineWidth(1);
-                // Rysujemy kółko wewnątrz kwadratu pola
                 gc.fillOval(a.getX() * CELL_SIZE + 4, a.getY() * CELL_SIZE + 4, CELL_SIZE - 8, CELL_SIZE - 8);
                 gc.strokeOval(a.getX() * CELL_SIZE + 4, a.getY() * CELL_SIZE + 4, CELL_SIZE - 8, CELL_SIZE - 8);
             }

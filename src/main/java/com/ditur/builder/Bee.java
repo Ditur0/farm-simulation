@@ -1,49 +1,39 @@
 package com.ditur.builder;
 
+import com.ditur.Board;
 import com.ditur.Field;
 
 import java.util.Random;
 
 public class Bee extends Agent {
+
     private final Random random = new Random();
     private boolean isDead = false;
 
-    // Własny builder dedykowany dla Pszczoły
-    public static class BeeBuilder extends Agent.Builder<BeeBuilder> {
-        @Override
-        protected BeeBuilder self() { return this; }
-
-        @Override
-        public Bee build() {
-            this.type = "BEE";
-            return new Bee(this);
-        }
-    }
-
-    private Bee(BeeBuilder builder) {
-        super(builder);
+    public Bee(int id, int x, int y, Board board, int energy, String name) {
+        super(id, x, y, board, energy, name, "BEE");
     }
 
     @Override
     public void step() {
         if (isDead) return;
 
-        // 1. Sprawdzenie czy pole, na którym stoi, ma aktywny pestycyd
+        // 1. Check pesticide
         Field currentField = board.getField(x, y);
-        if (currentField.isPesticideActive()) {
-            isDead = true;
-            return;
-        }
+//        TODO: make bees avoid this filed when pesticide is active
+//        if (currentField.isPesticideActive()) {
+//            this.isDead = true;
+//            return;
+//        }
 
-        // 2. Jeśli pole rośnie – zapylaj (skróć czas wzrostu o 2 kroki)
+        // 2. Pollination (if the field grows, we speed it up one extra step)
         if (currentField.getFieldState().equals("growing")) {
-            // Logika skrócenia czasu wzrostu (symulacja zapylania)
-            currentField.updateState(); // przyspieszamy wzrost sztucznie o dodatkowy krok
+            currentField.updateState();
         }
 
-        // 3. Wykonaj losowy ruch (Sąsiedztwo Moore'a)
-        int moveX = x + (random.nextInt(3) - 1); // -1, 0 lub 1
-        int moveY = y + (random.nextInt(3) - 1); // -1, 0 lub 1
+        // 3. Random move
+        int moveX = x + (random.nextInt(3) - 1);
+        int moveY = y + (random.nextInt(3) - 1);
         moveTo(moveX, moveY);
     }
 
