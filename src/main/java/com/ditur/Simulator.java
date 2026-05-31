@@ -1,5 +1,7 @@
 package com.ditur;
 
+import com.ditur.builder.Agent;
+import com.ditur.builder.Bee;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -11,11 +13,16 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Simulator extends Application {
 
@@ -37,6 +44,9 @@ public class Simulator extends Application {
     private Canvas canvas;
     private Timeline timeline;
 
+    private List<Agent> agents = new ArrayList<>();
+    private Random random = new Random();
+
     // Simulation counters
     private int tickCount = 0;
     private int harvestedCrops = 0;
@@ -44,6 +54,7 @@ public class Simulator extends Application {
     // UI components
     private Label lblTicks;
     private Label lblCrops;
+    private TextField tfBeeCount;
 
     private static final int CELL_SIZE = 35; // Size of one field in pixels
 
@@ -83,8 +94,35 @@ public class Simulator extends Application {
         lblTicks = new Label("Simulation step: 0");
         lblCrops = new Label("Harvested crops: 0");
 
+        Label beeLabel = new Label("Initial Bee count:");
+        tfBeeCount = new javafx.scene.control.TextField("5"); // Domyślnie 5 pszczół
+
+        Button btnSpawnBees = new Button("Spawn Bees");
+        btnSpawnBees.setMaxWidth(Double.MAX_VALUE);
+
+        // Akcja po kliknięciu przycisku generowania pszczół
+        btnSpawnBees.setOnAction(e -> {
+            try {
+                int count = Integer.parseInt(tfBeeCount.getText());
+                for (int i = 0; i < count; i++) {
+                    Bee newBee = new Bee.BeeBuilder()
+                            .setId(agents.size())
+                            .setX(random.nextInt(board.getWidth()))
+                            .setY(random.nextInt(board.getHeight()))
+                            .setBoard(board)
+                            .setEnergy(100)
+                            .setName("Bee " + i)
+                            .build();
+                    agents.add(newBee);
+                }
+                renderBoard(); // Przerysuj, by natychmiast zobaczyć zmiany
+            } catch (NumberFormatException ex) {
+                tfBeeCount.setText("Wpisz cyfrę!");
+            }
+        });
+
         // Add elements to left panel side
-        leftPanel.getChildren().addAll(titleLabel, btnStart, btnPause, speedLabel, speedSlider, statsLabel, lblTicks, lblCrops);
+        leftPanel.getChildren().addAll(titleLabel, btnStart, btnPause, speedLabel, speedSlider, statsLabel, lblTicks, lblCrops, beeLabel, tfBeeCount, btnSpawnBees);
 
         // 3. Right side
         int canvasWidth = board.getWidth() * CELL_SIZE;
@@ -146,6 +184,17 @@ public class Simulator extends Application {
             }
         }
 
+        // Wykonaj krok dla każdego żywego agenta
+        for (int i = agents.size() - 1; i >= 0; i--) {
+            Agent a = agents.get(i);
+            a.step();
+
+            // Jeśli pszczoła zginęła przez pestycyd, usuń ją z listy
+            if (a instanceof Bee && ((Bee) a).isDead()) {
+                agents.remove(i);
+            }
+        }
+
         // After updating the logical data draw the image again
         renderBoard();
     }
@@ -185,6 +234,18 @@ public class Simulator extends Application {
                 gc.setStroke(Color.web("#3A4D39"));
                 gc.setLineWidth(1);
                 gc.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            }
+        }
+
+        // Rysowanie pszczół na planszy jako małe żółte kółka
+        for (Agent a : agents) {
+            if (a instanceof Bee) {
+                gc.setFill(Color.YELLOW);
+                gc.setStroke(Color.BLACK);
+                gc.setLineWidth(1);
+                // Rysujemy kółko wewnątrz kwadratu pola
+                gc.fillOval(a.getX() * CELL_SIZE + 4, a.getY() * CELL_SIZE + 4, CELL_SIZE - 8, CELL_SIZE - 8);
+                gc.strokeOval(a.getX() * CELL_SIZE + 4, a.getY() * CELL_SIZE + 4, CELL_SIZE - 8, CELL_SIZE - 8);
             }
         }
     }
