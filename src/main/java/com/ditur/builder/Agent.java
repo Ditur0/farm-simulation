@@ -40,6 +40,6 @@ public abstract class Agent {
 
    // protected Agent offspring = null;
    // public Agent getOffspring() {return offspring; }
-   // public void clearOffsprig() {this.offspring = null;}
+   // public void clearOffspring() {this.offspring = null;}
 
 }
