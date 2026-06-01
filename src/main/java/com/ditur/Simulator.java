@@ -3,6 +3,7 @@ package com.ditur;
 import com.ditur.builder.Agent;
 import com.ditur.builder.AgentFactory;
 import com.ditur.builder.Bee;
+import com.ditur.builder.Pest;
 import com.ditur.ui.SimulationView;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -93,6 +94,27 @@ public class Simulator extends Application {
             }
         });
 
+        view.getBtnSpawnPest().setOnAction(e -> {
+            try {
+                int count = Integer.parseInt(view.getTfPestCount().getText());
+                for (int i = 0; i < count; i++) {
+                    Pest newPest = AgentFactory.createPest(
+                            agents.size(),
+                            random.nextInt(board.getWidth()),
+                            random.nextInt(board.getHeight()),
+                            board,
+                            50, // przykładoway stan energii początkowej
+                            "Pest" + i
+                    );
+                    agents.add(newPest);
+                }
+                view.render(board, agents);
+            } catch (NumberFormatException ex) {
+                view.getTfPestCount().setText("Enter a number!");
+            }
+        });
+
+
         view.getSpeedSlider().valueProperty().addListener((observable, oldValue, newValue) -> {
             boolean wasRunning = timeline.getStatus() == Animation.Status.RUNNING;
             timeline.stop();
@@ -115,6 +137,8 @@ public class Simulator extends Application {
         tickCount++;
         view.updateStats(tickCount, harvestedCrops);
 
+        List<Agent> babies = new ArrayList<>();
+
         // Step for every living agent
         for (int i = agents.size() - 1; i >= 0; i--) {
             Agent a = agents.get(i);
@@ -124,6 +148,12 @@ public class Simulator extends Application {
 //            if (a instanceof Bee && ((Bee) a).isDead()) {
 //                agents.remove(i);
 //            }
+            if(a.getOffspring() != null){
+                agents.addAll(babies);
+            }
+            if (a instanceof Pest && ((Pest) a).isDead()) {
+               agents.remove(i);
+            }
         }
 
         // Go through all the fields on the board and update their logical states
