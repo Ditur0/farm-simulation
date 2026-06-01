@@ -25,4 +25,16 @@ public class AgentFactory {
                 "PEST"
         );
     }
+    public static Farmer createFarmer(int id, int x, int y, Board board, int energy, String name){
+        return new Farmer(
+                id,
+                x,
+                y,
+                board,
+                energy,
+                name,
+                "FARMER"
+        );
+    }
+
 }
