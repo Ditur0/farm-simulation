@@ -4,6 +4,7 @@ import com.ditur.Board;
 import com.ditur.Field;
 import com.ditur.builder.Agent;
 import com.ditur.builder.Bee;
+import com.ditur.builder.Pest;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -28,6 +29,9 @@ public class SimulationView {
     private final Button btnSpawnBees;
     private final Slider speedSlider;
     private final TextField tfBeeCount;
+
+    private final Button btnSpawnPest;
+    private final TextField tfPestCount;
 
     private final HBox mainLayout;
     private final int cellSize;
@@ -66,8 +70,13 @@ public class SimulationView {
         btnSpawnBees = new Button("Spawn Bees");
         btnSpawnBees.setMaxWidth(Double.MAX_VALUE);
 
-        leftPanel.getChildren().addAll(titleLabel, btnStart, btnPause, speedLabel, speedSlider, statsLabel, lblTicks, lblCrops, beeLabel, tfBeeCount, btnSpawnBees);
+        Label pestLabel = new Label("Initial Pest count:");
+        tfPestCount = new TextField("5");
 
+        btnSpawnPest = new Button("Spawn Pests");
+        btnSpawnPest.setMaxWidth(Double.MAX_VALUE);
+
+        leftPanel.getChildren().addAll(titleLabel, btnStart, btnPause, speedLabel, speedSlider, statsLabel, lblTicks, lblCrops, beeLabel, tfBeeCount, btnSpawnBees, pestLabel, tfPestCount, btnSpawnPest);
         // 2. Right panel
         int canvasWidth = boardWidth * cellSize;
         int canvasHeight = boardHeight * cellSize;
@@ -129,6 +138,12 @@ public class SimulationView {
                 gc.setLineWidth(1);
                 gc.fillOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
                 gc.strokeOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
+            } else if ( a instanceof Pest){
+                gc.setFill(Color.RED);
+                gc.setStroke(Color.RED);
+                gc.setLineWidth(1);
+                gc.fillOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
+                gc.strokeOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
             }
         }
     }
@@ -145,4 +160,7 @@ public class SimulationView {
     public Button getBtnSpawnBees() { return btnSpawnBees; }
     public Slider getSpeedSlider() { return speedSlider; }
     public TextField getTfBeeCount() { return tfBeeCount; }
+
+    public TextField getTfPestCount() {return tfPestCount;}
+    public Button getBtnSpawnPest() { return btnSpawnPest; }
 }
