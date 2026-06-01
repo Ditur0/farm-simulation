@@ -5,6 +5,7 @@ import com.ditur.Field;
 import com.ditur.builder.Agent;
 import com.ditur.builder.Bee;
 import com.ditur.builder.Pest;
+import com.ditur.builder.Farmer;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -33,10 +34,15 @@ public class SimulationView {
     private final Button btnSpawnPest;
     private final TextField tfPestCount;
 
+    private final Button btnSpawnFarmer;
+    private final TextField tfFarmerCount;
+
+
     private final HBox mainLayout;
     private final int cellSize;
 
     public SimulationView(int boardWidth, int boardHeight, int cellSize) {
+
         this.cellSize = cellSize;
 
         // 1. Left side of Simulator
@@ -76,7 +82,14 @@ public class SimulationView {
         btnSpawnPest = new Button("Spawn Pests");
         btnSpawnPest.setMaxWidth(Double.MAX_VALUE);
 
-        leftPanel.getChildren().addAll(titleLabel, btnStart, btnPause, speedLabel, speedSlider, statsLabel, lblTicks, lblCrops, beeLabel, tfBeeCount, btnSpawnBees, pestLabel, tfPestCount, btnSpawnPest);
+        Label farmerLabel = new Label("Initial Farmer count:");
+        tfFarmerCount = new TextField("5");
+
+        btnSpawnFarmer = new Button("Spawn Farmers");
+        btnSpawnFarmer.setMaxWidth(Double.MAX_VALUE);
+
+
+        leftPanel.getChildren().addAll(titleLabel, btnStart, btnPause, speedLabel, speedSlider, statsLabel, lblTicks, lblCrops, beeLabel, tfBeeCount, btnSpawnBees, pestLabel, tfPestCount, btnSpawnPest, farmerLabel, tfFarmerCount, btnSpawnFarmer);
         // 2. Right panel
         int canvasWidth = boardWidth * cellSize;
         int canvasHeight = boardHeight * cellSize;
@@ -144,6 +157,12 @@ public class SimulationView {
                 gc.setLineWidth(1);
                 gc.fillOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
                 gc.strokeOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
+            } else if (a instanceof Farmer){
+                gc.setFill(Color.BLACK);
+                gc.setStroke(Color.BLACK);
+                gc.setLineWidth(1);
+                gc.fillOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
+                gc.strokeOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
             }
         }
     }
@@ -163,4 +182,7 @@ public class SimulationView {
 
     public TextField getTfPestCount() {return tfPestCount;}
     public Button getBtnSpawnPest() { return btnSpawnPest; }
+
+    public TextField getTfFarmerCount() {return tfFarmerCount;}
+    public Button getBtnSpawnFarmer() { return btnSpawnFarmer; }
 }
