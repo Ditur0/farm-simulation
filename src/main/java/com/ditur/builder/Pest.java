@@ -128,5 +128,9 @@ public class Pest extends Agent{
         return closestCrop;
     }
 
+    public void kill(){
+        this.isDead = true;
+    }
+
 
 }
