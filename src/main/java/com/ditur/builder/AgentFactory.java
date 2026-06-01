@@ -14,4 +14,15 @@ public class AgentFactory {
                 name
         );
     }
+    public static Pest createPest(int id, int x, int y, Board board, int energy, String name){
+        return new Pest(
+                id,
+                x,
+                y,
+                board,
+                energy,
+                name,
+                "PEST"
+        );
+    }
 }
