@@ -4,6 +4,7 @@ import com.ditur.Board;
 import com.ditur.CropType;
 import com.ditur.Field;
 
+import java.util.List;
 import java.util.Random;
 
 public class Pest extends Agent{
@@ -49,7 +50,7 @@ public class Pest extends Agent{
         }
 
         // Rozmnażanie
- /*
+
         if(this.energy >=60 && this.offspring == null){
 
             this.energy -=30;
@@ -64,14 +65,68 @@ public class Pest extends Agent{
 
             );
         }
-*/
 
-        int moveX = x + (random.nextInt(3) - 1);
-        int moveY = y + (random.nextInt(3) - 1);
+
+        // Targeted movement
+
+        Field targetCrop = findNearsetCrop(5); // Przykładowy zasięg wzroku robala
+
+        int moveX = this.x;
+        int moveY = this.y;
+
+        if (targetCrop != null) {
+            int diffX = targetCrop.getX() - this.x;
+            int diffY = targetCrop.getY() - this.y;
+
+            if (diffX > board.getWidth() / 2) diffX -= board.getWidth();
+            else if(diffX < -board.getWidth() /2) diffX += board.getWidth();
+
+            if (diffY > board.getHeight() / 2) diffY -= board.getHeight();
+            else if(diffY < -board.getHeight() /2) diffY += board.getHeight();
+
+            if (diffX > 0) moveX++;
+            else if (diffX < 0) moveX--;
+
+            if (diffY > 0) moveY++;
+            else if (diffY < 0) moveY--;
+        } else {
+            moveX += (random.nextInt(3) - 1);
+            moveY += (random.nextInt(3) - 1);
+        }
         moveTo(moveX, moveY);
-
     }
+
     public boolean isDead() {
         return isDead;
     }
+
+    // Finding closest crops
+
+    private Field findNearsetCrop(int viewRadius){
+        Field closestCrop = null;
+        int minDistance = Integer.MAX_VALUE;
+
+        List<Field> neighbors = board.getNeighbors(this.x, this.y, viewRadius);
+
+        for(Field field : neighbors){
+            if(field.getFieldState().equals("growing") || field.getFieldState().equals("maturely")){
+
+                int diffX = Math.abs(field.getX() - this.x);
+                int diffY = Math.abs(field.getY() - this.y);
+
+                if(diffX > board.getWidth() /2) diffX = board.getWidth() - diffX;
+                if(diffY > board.getHeight() /2) diffY = board.getHeight() - diffY;
+
+                int distance = diffX + diffY;
+
+                if(distance < minDistance){
+                    minDistance = distance;
+                    closestCrop = field;
+                }
+            }
+        }
+        return closestCrop;
+    }
+
+
 }

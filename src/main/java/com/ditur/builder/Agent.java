@@ -36,10 +36,9 @@ public abstract class Agent {
     public String getType() { return type; }
     public int getEnergy() { return energy; }
 
-   // do dzieciakow,
-
-   // protected Agent offspring = null;
-   // public Agent getOffspring() {return offspring; }
-   // public void clearOffspring() {this.offspring = null;}
+    // do dzieciakow
+     protected Agent offspring = null;
+     public Agent getOffspring() {return offspring; }
+     public void clearOffsprig() {this.offspring = null;}
 
 }
