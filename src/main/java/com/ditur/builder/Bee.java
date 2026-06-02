@@ -27,6 +27,7 @@ public class Bee extends Agent {
 //        }
 
         // 2. Pollination (if the field grows, we speed it up one extra step)
+        // TODO: speed up process
         if (currentField.getFieldState().equals("growing")) {
             currentField.updateState();
         }

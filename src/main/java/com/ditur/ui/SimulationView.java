@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -22,32 +23,63 @@ import java.util.List;
 public class SimulationView {
 
     private final Canvas canvas;
-    private final Label lblTicks;
-    private final Label lblCrops;
 
-    private final Button btnStart;
-    private final Button btnPause;
-    private final Button btnSpawnBees;
-    private final Slider speedSlider;
-    private final TextField tfBeeCount;
+    // --------------------------------------------   UI
+    private Label lblTicks;
+    private Label lblCrops;
 
-    private final Button btnSpawnPest;
-    private final TextField tfPestCount;
+    private Button btnStart;
+    private Button btnPause;
+    private Button btnSpawnBees;
+    private Slider speedSlider;
+    private TextField tfBeeCount;
 
-    private final Button btnSpawnFarmer;
-    private final TextField tfFarmerCount;
+    private Button btnSpawnPest;
+    private TextField tfPestCount;
 
-    private final TextField tfCropPercentage;
-    private final Button btnGenerateCrops;
+    private Button btnSpawnFarmer;
+    private TextField tfFarmerCount;
 
+    private TextField tfCropPercentage;
+    private Button btnGenerateCrops;
+    // --------------------------------------------   UI
 
-    private final HBox mainLayout;
+    private HBox mainLayout;
     private final int cellSize;
 
-    public SimulationView(int boardWidth, int boardHeight, int cellSize) {
+    // --------------------------------------------   TEXTURES
+    private Image imgCarrotGrowing;
+    private Image imgCarrotMature;
+    private Image imgPotatoGrowing;
+    private Image imgPotatoMature;
+    private Image imgWheatGrowing;
+    private Image imgWheatMature;
+    private Image imgBee;
+    private Image imgFarmer;
+    private Image imgPest;
+    // --------------------------------------------   TEXTURES
 
+    public SimulationView(int boardWidth, int boardHeight, int cellSize) {
         this.cellSize = cellSize;
 
+        loadAllTextures();
+
+        // Create and show all UI and hud stuff
+        canvas = createLabels(boardWidth, boardHeight, cellSize);
+    }
+
+    public void render(Board board, List<Agent> agents) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        drawGridAndFields(board, gc);
+
+        drawAgents(agents, gc);
+    }
+
+    private Canvas createLabels(int boardWidth, int boardHeight, int cellSize) {
+        final Canvas canvas;
         // 1. Left side of Simulator
         VBox leftPanel = new VBox(15);
         leftPanel.setPadding(new Insets(15));
@@ -112,68 +144,80 @@ public class SimulationView {
 
         // Merge do one layout
         mainLayout = new HBox(leftPanel, canvasContainer);
+        return canvas;
     }
 
-    // Method that draws the current state of the board and agents
-    public void render(Board board, List<Agent> agents) {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+    private void loadAllTextures() {
+        try {
+            imgCarrotGrowing = new Image(getClass().getResourceAsStream("/carrot/tile002.png"));
+            imgCarrotMature = new Image(getClass().getResourceAsStream("/carrot/tile005.png"));
+            imgPotatoGrowing = new Image(getClass().getResourceAsStream("/potato/tile002.png"));
+            imgPotatoMature = new Image(getClass().getResourceAsStream("/potato/tile005.png"));
+            imgWheatGrowing = new Image(getClass().getResourceAsStream("/wheat/tile002.png"));
+            imgWheatMature = new Image(getClass().getResourceAsStream("/wheat/tile005.png"));
+            imgBee = new Image(getClass().getResourceAsStream("/agents/bee.png"));
+            imgFarmer = new Image(getClass().getResourceAsStream("/agents/farmer.png"));
+            imgPest = new Image(getClass().getResourceAsStream("/agents/ant.png"));
+        } catch (Exception e) {
+            System.out.println("Error while loading textures");
+            e.printStackTrace();
+        }
+    }
 
-        // Drawing grid squares
+    private void drawAgents(List<Agent> agents, GraphicsContext gc) {
+        for (Agent a : agents) {
+
+            int posX = a.getX() * cellSize;
+            int posY = a.getY() * cellSize;
+
+            switch (a) {
+                case Bee bee -> gc.drawImage(imgBee, posX+5, posY+5, cellSize-10, cellSize-10);
+                case Pest pest -> gc.drawImage(imgPest, posX+5, posY+5, cellSize-10, cellSize-10);
+                case Farmer farmer -> gc.drawImage(imgFarmer, posX-5, posY-5, cellSize+10, cellSize+10);
+                default -> {
+                }
+            }
+        }
+    }
+
+    private void drawGridAndFields(Board board, GraphicsContext gc) {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Field field = board.getField(x, y);
 
+                int posX = x * cellSize;
+                int posY = y * cellSize;
+
+                // 1st layout - DIRT
+                if (field.getHydrationLevel() > 0) {
+                    gc.setFill(Color.web("#557A46")); // zielen/gleba
+                } else {
+                    gc.setFill(Color.web("#A0A2A0")); // wysuszona, szara ziemia
+                }
+                gc.fillRect(posX, posY, cellSize - 1, cellSize - 1);
+
+
+                // 2nd layout - CROPS
                 if (field.getFieldState().equals("growing")) {
                     switch (field.getCropType()) {
-                        case CARROT -> gc.setFill(Color.web("#D27613")); // pomaranczowy
-                        case POTATO -> gc.setFill(Color.web("#8A624A")); // jasny braz
-                        case WHEAT -> gc.setFill(Color.web("#D1BC6A"));  // zloto
-                        default -> gc.setFill(Color.DARKGREEN);
+                        case CARROT ->  { gc.drawImage(imgCarrotGrowing, posX, posY, cellSize, cellSize); }
+                        case POTATO -> { gc.drawImage(imgPotatoGrowing, posX, posY, cellSize, cellSize); }
+                        case WHEAT -> { gc.drawImage(imgWheatGrowing, posX, posY, cellSize, cellSize); }
+                        default -> { gc.setFill(Color.DARKGREEN); gc.fillRect(posX, posY, cellSize - 1, cellSize - 1); }
                     }
                 } else if (field.getFieldState().equals("maturely") || field.getFieldState().equals("mature")) {
                     switch (field.getCropType()) {
-                        case CARROT -> gc.setFill(Color.ORANGE);
-                        case POTATO -> gc.setFill(Color.web("#5C4033")); // ciemny, brąz
-                        case WHEAT -> gc.setFill(Color.GOLD);
-                        default -> gc.setFill(Color.GREEN);
-                    }
-                } else {
-                    if (field.getHydrationLevel() > 0) {
-                        gc.setFill(Color.web("#557A46")); // zielen/gleba
-                    } else {
-                        gc.setFill(Color.web("#A0A2A0")); // wysuszona, szara ziemia
+                        case CARROT -> {gc.drawImage(imgCarrotMature, posX, posY, cellSize, cellSize);}
+                        case POTATO -> { gc.drawImage(imgPotatoMature, posX, posY, cellSize, cellSize); }
+                        case WHEAT -> { gc.drawImage(imgWheatMature, posX, posY, cellSize, cellSize); }
+                        default -> { gc.setFill(Color.GREEN); gc.fillRect(posX, posY, cellSize - 1, cellSize - 1); }
                     }
                 }
 
-                // Draw a square field
-                gc.fillRect(x * cellSize, y * cellSize, cellSize - 1, cellSize - 1);
-
+                // GRID
                 gc.setStroke(Color.web("#3A4D39"));
                 gc.setLineWidth(1);
-                gc.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
-            }
-        }
-
-        // Draw bees
-        for (Agent a : agents) {
-            if (a instanceof Bee) {
-                gc.setFill(Color.YELLOW);
-                gc.setStroke(Color.BLACK);
-                gc.setLineWidth(1);
-                gc.fillOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
-                gc.strokeOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
-            } else if ( a instanceof Pest){
-                gc.setFill(Color.RED);
-                gc.setStroke(Color.RED);
-                gc.setLineWidth(1);
-                gc.fillOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
-                gc.strokeOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
-            } else if (a instanceof Farmer){
-                gc.setFill(Color.BLACK);
-                gc.setStroke(Color.BLACK);
-                gc.setLineWidth(1);
-                gc.fillOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
-                gc.strokeOval(a.getX() * cellSize + 4, a.getY() * cellSize + 4, cellSize - 8, cellSize - 8);
+                gc.strokeRect(posX, posY, cellSize, cellSize);
             }
         }
     }

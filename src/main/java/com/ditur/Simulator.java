@@ -30,7 +30,7 @@ public class Simulator extends Application {
 
     /*
         DOING:
-            - add better colors for crops and field and optimal growing time
+
      */
 
     /*
@@ -42,6 +42,7 @@ public class Simulator extends Application {
             - add Pest class
             - add random method to generate randomly crops to all cells
             - add Farmer class
+            - add better colors for crops and field and optimal growing time
      */
 
     private Board board;
@@ -67,16 +68,24 @@ public class Simulator extends Application {
         // 2. UI init
         view = new SimulationView(board.getWidth(), board.getHeight(), CELL_SIZE);
 
-        // 3. Clock configurations
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(view.getSpeedSlider().getValue()),
-                event -> performSimulationStep());
-        timeline = new Timeline(keyFrame);
-        timeline.setCycleCount(Animation.INDEFINITE); // Simulation endless loop
+        // 3. Clock
+        simulationClock();
 
         // 4. Merge UI with logic
         view.getBtnStart().setOnAction(e -> timeline.play());
         view.getBtnPause().setOnAction(e -> timeline.pause());
 
+        actionOffButtons();
+
+        // 6. WINDOW LAUNCH
+        Scene scene = new Scene(view.getMainLayout());
+        stage.setTitle("Farm Simulator");
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
+    private void actionOffButtons() {
         view.getBtnSpawnBees().setOnAction(e -> {
             try {
                 int count = Integer.parseInt(view.getTfBeeCount().getText());
@@ -161,13 +170,13 @@ public class Simulator extends Application {
         });
 
         view.render(board, agents);
+    }
 
-        // 6. WINDOW LAUNCH
-        Scene scene = new Scene(view.getMainLayout());
-        stage.setTitle("Farm Simulator");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+    private void simulationClock() {
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(view.getSpeedSlider().getValue()),
+                event -> performSimulationStep());
+        timeline = new Timeline(keyFrame);
+        timeline.setCycleCount(Animation.INDEFINITE); // Simulation endless loop
     }
 
     private void performSimulationStep() {
