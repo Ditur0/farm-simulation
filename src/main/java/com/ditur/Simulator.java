@@ -60,7 +60,7 @@ public class Simulator extends Application {
     @Override
     public void start(Stage stage) {
         // 1. Board init
-        board = new Board(20, 20);
+        board = new Board(20, 22);
 
         cropGenerator.generateCrops(board, 25);
 
