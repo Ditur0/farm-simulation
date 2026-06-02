@@ -1,9 +1,6 @@
 package com.ditur;
 
-import com.ditur.builder.Agent;
-import com.ditur.builder.AgentFactory;
-import com.ditur.builder.Bee;
-import com.ditur.builder.Pest;
+import com.ditur.builder.*;
 import com.ditur.ui.SimulationView;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -45,7 +42,7 @@ public class Simulator extends Application {
 
     // Simulation counters
     private int tickCount = 0;
-    private int harvestedCrops = 0;
+    public static int harvestedCrops = 0;
 
     private List<Agent> agents = new ArrayList<>();
     private Random random = new Random();
@@ -114,6 +111,28 @@ public class Simulator extends Application {
             }
         });
 
+        view.getBtnSpawnFarmer().setOnAction(e -> {
+            try {
+                int count = Integer.parseInt(view.getTfFarmerCount().getText());
+                for (int i = 0; i < count; i++) {
+                    Farmer newFarmer = AgentFactory.createFarmer(
+                            agents.size(),
+                            random.nextInt(board.getWidth()),
+                            random.nextInt(board.getHeight()),
+                            board,
+                            100, // przykładoway stan energii początkowej
+                            "Farmer" + i
+                    );
+                    agents.add(newFarmer);
+                }
+                view.render(board, agents);
+            } catch (NumberFormatException ex) {
+                view.getTfPestCount().setText("Enter a number!");
+            }
+        });
+
+
+
 
         view.getSpeedSlider().valueProperty().addListener((observable, oldValue, newValue) -> {
             boolean wasRunning = timeline.getStatus() == Animation.Status.RUNNING;
@@ -154,6 +173,7 @@ public class Simulator extends Application {
             if (a instanceof Pest && ((Pest) a).isDead()) {
                agents.remove(i);
             }
+
         }
 
         // Go through all the fields on the board and update their logical states
