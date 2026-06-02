@@ -1,9 +1,9 @@
-package com.ditur;
+package com.ditur.crops;
 
 public enum CropType {
-    CARROT(5),
-    POTATO(10),
-    WHEAT(15),
+    CARROT(40),
+    POTATO(60),
+    WHEAT(70),
     NONE(0);
 
     private final int baseGrowthTime;

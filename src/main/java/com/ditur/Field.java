@@ -1,5 +1,7 @@
 package com.ditur;
 
+import com.ditur.crops.CropType;
+
 public class Field {
     private final int x;
     private final int y;
@@ -13,7 +15,7 @@ public class Field {
     private CropType cropType;
 
     // Maximum constant values for field logic
-    private static final int MAX_HYDRATION = 10;
+    private static final int MAX_HYDRATION = 100;
     private static final int DEFAULT_PESTICIDE_DURATION = 5;
 
     public Field(int x, int y) {
@@ -30,9 +32,9 @@ public class Field {
     // Main field state update method called on each simulation tick
     public void updateState() {
         // 1. Water degradation
-        if (hydrationLevel > 0) {
-            hydrationLevel--;
-        }
+//        if (hydrationLevel > 0) {
+//            hydrationLevel--;
+//        }
 
         // 2. Pesticide Logic
         if (isPesticideActive) {

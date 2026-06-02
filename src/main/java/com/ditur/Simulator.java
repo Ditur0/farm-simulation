@@ -1,6 +1,8 @@
 package com.ditur;
 
 import com.ditur.builder.*;
+import com.ditur.crops.CropGenerator;
+import com.ditur.crops.CropType;
 import com.ditur.ui.SimulationView;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -18,14 +20,17 @@ public class Simulator extends Application {
 
     /*
         TODO:
-            - add random method to generate randomly crops to all cells
-            - add better colors for crops and field and optimal growing time
-            - add Farmer class
-            - add Pest class
             - Pesticide class for Farmer
             - Harvest class for Farmer
             - GRAPHS !!!!
             - Repair slider speed !!!
+            - add RESET BUTTON
+            - make pest multiplication !!!!!
+     */
+
+    /*
+        DOING:
+            - add better colors for crops and field and optimal growing time
      */
 
     /*
@@ -34,6 +39,9 @@ public class Simulator extends Application {
             - add Bee class
             - add agents builder factory class
             - Optional class for drawing UI
+            - add Pest class
+            - add random method to generate randomly crops to all cells
+            - add Farmer class
      */
 
     private Board board;
@@ -47,17 +55,14 @@ public class Simulator extends Application {
     private List<Agent> agents = new ArrayList<>();
     private Random random = new Random();
     private static final int CELL_SIZE = 35; // Size of one field in pixels
+    private final CropGenerator cropGenerator = new CropGenerator();
 
     @Override
     public void start(Stage stage) {
         // 1. Board init
         board = new Board(20, 20);
 
-        // TODO: method for randomly fill board
-        board.getField(2, 2).setCrop(CropType.CARROT);
-        board.getField(5, 5).setCrop(CropType.POTATO);
-        board.getField(8, 3).setCrop(CropType.WHEAT);
-        board.getField(10, 10).setCrop(CropType.POTATO);
+        cropGenerator.generateCrops(board, 25);
 
         // 2. UI init
         view = new SimulationView(board.getWidth(), board.getHeight(), CELL_SIZE);
@@ -131,15 +136,28 @@ public class Simulator extends Application {
             }
         });
 
-
-
-
         view.getSpeedSlider().valueProperty().addListener((observable, oldValue, newValue) -> {
             boolean wasRunning = timeline.getStatus() == Animation.Status.RUNNING;
             timeline.stop();
             KeyFrame newFrame = new KeyFrame(Duration.millis(newValue.doubleValue()), event -> performSimulationStep());
             timeline.getKeyFrames().setAll(newFrame);
             if (wasRunning) timeline.play();
+        });
+
+        view.getBtnGenerateCrops().setOnAction(e -> {
+            try {
+                int percentage = Integer.parseInt(view.getTfCropPercentage().getText());
+                if (percentage < 0 || percentage > 100) {
+                    view.getTfCropPercentage().setText("0-100!");
+                    return;
+                }
+
+                cropGenerator.generateCrops(board, percentage);
+
+                view.render(board, agents);
+            } catch (NumberFormatException ex) {
+                view.getTfCropPercentage().setText("Enter a number!");
+            }
         });
 
         view.render(board, agents);

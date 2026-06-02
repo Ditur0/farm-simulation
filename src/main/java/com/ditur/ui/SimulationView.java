@@ -37,6 +37,9 @@ public class SimulationView {
     private final Button btnSpawnFarmer;
     private final TextField tfFarmerCount;
 
+    private final TextField tfCropPercentage;
+    private final Button btnGenerateCrops;
+
 
     private final HBox mainLayout;
     private final int cellSize;
@@ -88,8 +91,16 @@ public class SimulationView {
         btnSpawnFarmer = new Button("Spawn Farmers");
         btnSpawnFarmer.setMaxWidth(Double.MAX_VALUE);
 
+        Label cropLabel = new Label("Crop coverage (%):");
+        tfCropPercentage = new TextField("30");
 
-        leftPanel.getChildren().addAll(titleLabel, btnStart, btnPause, speedLabel, speedSlider, statsLabel, lblTicks, lblCrops, beeLabel, tfBeeCount, btnSpawnBees, pestLabel, tfPestCount, btnSpawnPest, farmerLabel, tfFarmerCount, btnSpawnFarmer);
+        btnGenerateCrops = new Button("Generate Crops");
+        btnGenerateCrops.setMaxWidth(Double.MAX_VALUE);
+        btnGenerateCrops.setStyle("-fx-background-color: #A1CCD1; -fx-text-fill: black; -fx-font-weight: bold;");
+
+
+        leftPanel.getChildren().addAll(titleLabel, btnStart, btnPause, speedLabel, speedSlider, statsLabel, lblTicks, lblCrops, beeLabel, tfBeeCount, btnSpawnBees, pestLabel, tfPestCount, btnSpawnPest, farmerLabel, tfFarmerCount, btnSpawnFarmer, cropLabel, tfCropPercentage, btnGenerateCrops);
+
         // 2. Right panel
         int canvasWidth = boardWidth * cellSize;
         int canvasHeight = boardHeight * cellSize;
@@ -185,4 +196,7 @@ public class SimulationView {
 
     public TextField getTfFarmerCount() {return tfFarmerCount;}
     public Button getBtnSpawnFarmer() { return btnSpawnFarmer; }
+
+    public TextField getTfCropPercentage() { return tfCropPercentage; }
+    public Button getBtnGenerateCrops() { return btnGenerateCrops; }
 }

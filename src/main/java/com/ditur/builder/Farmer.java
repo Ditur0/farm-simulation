@@ -1,7 +1,7 @@
 package com.ditur.builder;
 
 import com.ditur.Board;
-import com.ditur.CropType;
+import com.ditur.crops.CropType;
 import com.ditur.Field;
 import com.ditur.Simulator;
 
