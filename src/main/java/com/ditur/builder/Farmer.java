@@ -77,7 +77,7 @@ public class Farmer extends Agent{
         List<Field> neighbors = board.getNeighbors(this.x, this.y, viewRadius);
 
         for (Field field : neighbors) {
-            if (field.getFieldState().equals("growing") && field.getHydrationLevel() <4 || field.getFieldState().equals("maturely") || field.getFieldState().equals("empty")){
+            if (field.getFieldState().equals("growing") && field.getHydrationLevel() <4 || field.getFieldState().equals("maturely")|| field.getFieldState().equals("mature") || field.getFieldState().equals("empty")){
 
                 int diffX = Math.abs(field.getX() - this.x);
                 int diffY = Math.abs(field.getY() - this.y);
@@ -116,6 +116,9 @@ public class Farmer extends Agent{
                 }
             }
         }
-
     }
+
+
+
+
 }
