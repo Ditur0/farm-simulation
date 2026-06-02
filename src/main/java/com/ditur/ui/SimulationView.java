@@ -157,7 +157,7 @@ public class SimulationView {
             imgWheatMature = new Image(getClass().getResourceAsStream("/wheat/tile005.png"));
             imgBee = new Image(getClass().getResourceAsStream("/agents/bee.png"));
             imgFarmer = new Image(getClass().getResourceAsStream("/agents/farmer.png"));
-            imgPest = new Image(getClass().getResourceAsStream("/agents/kaczka.png"));
+            imgPest = new Image(getClass().getResourceAsStream("/agents/duck.png"));
         } catch (Exception e) {
             System.out.println("Error while loading textures");
             e.printStackTrace();
