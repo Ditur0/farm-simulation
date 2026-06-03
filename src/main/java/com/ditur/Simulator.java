@@ -20,12 +20,14 @@ public class Simulator extends Application {
 
     /*
         TODO:
+            - add eliminate pest from farmer
             - Pesticide class for Farmer
             - Harvest class for Farmer
             - GRAPHS !!!!
             - Repair slider speed !!!
             - add RESET BUTTON
             - make pest multiplication !!!!!
+            - hwo fast crops lose water
      */
 
     /*
@@ -53,13 +55,15 @@ public class Simulator extends Application {
     private int tickCount = 0;
     public static int harvestedCrops = 0;
 
-    private List<Agent> agents = new ArrayList<>();
-    private Random random = new Random();
+    private List<Agent> agents;
+    private Random random;
     private static final int CELL_SIZE = 35; // Size of one field in pixels
-    private final CropGenerator cropGenerator = new CropGenerator();
+    private CropGenerator cropGenerator;
 
     @Override
     public void start(Stage stage) {
+        init();
+
         // 1. Board init
         board = new Board(20, 22);
 
@@ -83,6 +87,12 @@ public class Simulator extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
+    }
+
+    public void init() {
+        agents = new ArrayList<>();
+        random = new Random();
+        cropGenerator = new CropGenerator();
     }
 
     private void actionOffButtons() {

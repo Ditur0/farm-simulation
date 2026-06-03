@@ -131,6 +131,4 @@ public class Pest extends Agent{
     public void kill(){
         this.isDead = true;
     }
-
-
 }
