@@ -37,11 +37,12 @@ public class Bee extends Agent {
 //        int moveY = y + (random.nextInt(3) - 1);
 //        moveTo(moveX, moveY);
 
+
+        // Omijanie pestycydu
         int newX = this.getX() + random.nextInt(3) - 1; // ruch -1, 0, 1
         int newY = this.getY() + random.nextInt(3) - 1;
 
         if (newX >= 0 && newX < board.getWidth() && newY >= 0 && newY < board.getHeight()) {
-            // Pszczoła sprawdza, czy pole jest bezpieczne
             if (!board.getField(newX, newY).hasPesticide()) {
                 moveTo(newX, newY);
             }
