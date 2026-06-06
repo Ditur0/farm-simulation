@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -83,10 +84,12 @@ public class SimulationView {
 
     private Canvas createLabels(int boardWidth, int boardHeight, int cellSize) {
         final Canvas canvas;
-        // 1. Left side of Simulator
-        VBox leftPanel = new VBox(15);
+
+        GridPane leftPanel = new GridPane();
+        leftPanel.setHgap(15);
+        leftPanel.setVgap(12);
         leftPanel.setPadding(new Insets(15));
-        leftPanel.setPrefWidth(220);
+        leftPanel.setPrefWidth(440);
         leftPanel.setStyle("-fx-background-color: #F4F4F4; -fx-border-color: #CCCCCC; -fx-border-width: 0 1 0 0;");
 
         Label titleLabel = new Label("Farm Simulator");
@@ -103,38 +106,80 @@ public class SimulationView {
         speedSlider.setShowTickMarks(true);
 
         Label statsLabel = new Label("STATISTICS:");
-        statsLabel.setStyle("-fx-font-weight: bold; -fx-padding: 10 0 0 0;");
+        statsLabel.setStyle("-fx-font-weight: bold; -fx-padding: 5 0 0 0;");
 
         lblTicks = new Label("Simulation step: 0");
         lblCrops = new Label("Harvested crops: 0");
 
+        // 1st column
+        Label col1Title = new Label("Spawners & Map");
+        col1Title.setStyle("-fx-font-weight: bold; -fx-text-fill: #555555;");
+
         Label beeLabel = new Label("Initial Bee count:");
         tfBeeCount = new TextField("5");
-
         btnSpawnBees = new Button("Spawn Bees");
         btnSpawnBees.setMaxWidth(Double.MAX_VALUE);
 
         Label pestLabel = new Label("Initial Pest count:");
         tfPestCount = new TextField("5");
-
         btnSpawnPest = new Button("Spawn Pests");
         btnSpawnPest.setMaxWidth(Double.MAX_VALUE);
 
         Label farmerLabel = new Label("Initial Farmer count:");
         tfFarmerCount = new TextField("5");
-
         btnSpawnFarmer = new Button("Spawn Farmers");
         btnSpawnFarmer.setMaxWidth(Double.MAX_VALUE);
 
         Label cropLabel = new Label("Crop coverage (%):");
         tfCropPercentage = new TextField("30");
-
         btnGenerateCrops = new Button("Generate Crops");
         btnGenerateCrops.setMaxWidth(Double.MAX_VALUE);
         btnGenerateCrops.setStyle("-fx-background-color: #A1CCD1; -fx-text-fill: black; -fx-font-weight: bold;");
 
+        // 2nd column
+        Label col2Title = new Label("Pesticide Settings");
+        col2Title.setStyle("-fx-font-weight: bold; -fx-text-fill: #555555;");
 
-        leftPanel.getChildren().addAll(titleLabel, btnStart, btnPause, speedLabel, speedSlider, statsLabel, lblTicks, lblCrops, beeLabel, tfBeeCount, btnSpawnBees, pestLabel, tfPestCount, btnSpawnPest, farmerLabel, tfFarmerCount, btnSpawnFarmer, cropLabel, tfCropPercentage, btnGenerateCrops);
+        Label cooldownLabel = new Label("Pesticide Cooldown:");
+        tfPesticideCooldown = new TextField("100");
+
+        Label durationLabel = new Label("Pesticide Duration:");
+        tfPesticideDuration = new TextField("20");
+
+
+        leftPanel.add(titleLabel, 0, 0, 2, 1);
+        leftPanel.add(btnStart, 0, 1);
+        leftPanel.add(btnPause, 1, 1);
+        leftPanel.add(speedLabel, 0, 2, 2, 1);
+        leftPanel.add(speedSlider, 0, 3, 2, 1);
+
+        leftPanel.add(statsLabel, 0, 4, 2, 1);
+        leftPanel.add(lblTicks, 0, 5);
+        leftPanel.add(lblCrops, 1, 5);
+
+        leftPanel.add(col1Title, 0, 6);
+        leftPanel.add(beeLabel, 0, 7);
+        leftPanel.add(tfBeeCount, 0, 8);
+        leftPanel.add(btnSpawnBees, 0, 9);
+
+        leftPanel.add(pestLabel, 0, 10);
+        leftPanel.add(tfPestCount, 0, 11);
+        leftPanel.add(btnSpawnPest, 0, 12);
+
+        leftPanel.add(farmerLabel, 0, 13);
+        leftPanel.add(tfFarmerCount, 0, 14);
+        leftPanel.add(btnSpawnFarmer, 0, 15);
+
+        leftPanel.add(cropLabel, 0, 16);
+        leftPanel.add(tfCropPercentage, 0, 17);
+        leftPanel.add(btnGenerateCrops, 0, 18);
+
+        leftPanel.add(col2Title, 1, 6);
+        leftPanel.add(cooldownLabel, 1, 7);
+        leftPanel.add(tfPesticideCooldown, 1, 8);
+
+        leftPanel.add(durationLabel, 1, 10);
+        leftPanel.add(tfPesticideDuration, 1, 11);
 
         // 2. Right panel
         int canvasWidth = boardWidth * cellSize;
@@ -217,26 +262,21 @@ public class SimulationView {
                     }
                 }
 
-                // --- NOWOŚĆ: 3rd layout - PESTICIDE ANIMATION ---
+                // Pesticide Animation
                 if (field.hasPesticide()) {
                     int ticksLeft = field.getPesticideTicksLeft();
                     int maxDuration = field.getPesticideMaxDuration();
 
-                    // Obliczanie postępu (od 0.0 do 1.0) -> im mniej ticków zostało, tym większa chmura
                     double progress = 1.0 - ((double) ticksLeft / maxDuration);
 
-                    // Skalowanie rozmiaru na podstawie postępu animacji
                     double pSize = cellSize * progress;
 
-                    // Centrowanie rozszerzającego się czerwonego kwadratu wewnątrz kafelka
                     double pX = posX + (cellSize - pSize) / 2.0;
                     double pY = posY + (cellSize - pSize) / 2.0;
 
-                    // Rysowanie półprzezroczystego wypełnienia (0.3 oporności/alfa, żeby roślina prześwitywała)
                     gc.setFill(Color.color(1.0, 0.0, 0.0, 0.3));
                     gc.fillRect(pX, pY, pSize, pSize);
 
-                    // Rysowanie mocniejszej obramówki pestycydu
                     gc.setStroke(Color.color(1.0, 0.0, 0.0, 0.6));
                     gc.setLineWidth(1.5);
                     gc.strokeRect(pX, pY, pSize, pSize);
@@ -271,4 +311,7 @@ public class SimulationView {
 
     public TextField getTfCropPercentage() { return tfCropPercentage; }
     public Button getBtnGenerateCrops() { return btnGenerateCrops; }
+
+    public TextField getTfPesticideCooldown() { return tfPesticideCooldown; }
+    public TextField getTfPesticideDuration() { return tfPesticideDuration; }
 }

@@ -23,12 +23,10 @@ public class Farmer extends Agent{
     public void step() {
         Field currentField = board.getField(x, y);
 
-        // 1. Zmniejszamy cooldown, jeśli jest większy od 0
         if (pesticideCooldown > 0) {
             pesticideCooldown--;
         }
 
-        // 2. Jeśli cooldown wynosi 0, farmer rzuca pestycyd
         if (pesticideCooldown == 0) {
             applyPesticideAround();
         }
@@ -110,21 +108,22 @@ public class Farmer extends Agent{
         int fx = this.getX();
         int fy = this.getY();
 
-        // Rozprzestrzenianie o 1 kratkę w każdą stronę (promień 1)
+        // Get the pesticide duration set in the interface by the Simulator class
+        int duration = Simulator.pesticideGlobalDuration;
+
+        // Spreads 1 square in each direction (radius 1)
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 int targetX = fx + dx;
                 int targetY = fy + dy;
 
-                // Sprawdzamy, czy nie wychodzimy poza mapę
                 if (targetX >= 0 && targetX < board.getWidth() && targetY >= 0 && targetY < board.getHeight()) {
-                    board.getField(targetX, targetY).applyPesticide();
+                    board.getField(targetX, targetY).applyPesticide(duration);
                 }
             }
         }
 
-        // Reset cooldownu do 100 ticków
-        this.pesticideCooldown = 100;
+        this.pesticideCooldown = Simulator.pesticideGlobalCooldown;
     }
 
     public void eliminatePests(List<Agent> allAgents){

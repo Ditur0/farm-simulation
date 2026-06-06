@@ -86,8 +86,9 @@ public class Field {
         this.growthTime = 0;
     }
 
-    public void applyPesticide() {
-        this.pesticideTicksLeft = pesticideMaxDuration;
+    public void applyPesticide(int maxDuration) {
+        this.pesticideMaxDuration = maxDuration;
+        this.pesticideTicksLeft = maxDuration;
     }
 
     public boolean hasPesticide() {
@@ -102,7 +103,6 @@ public class Field {
         return pesticideMaxDuration;
     }
 
-    // Wywołaj to w swojej istniejącej metodzie updateState() w Field
     public void updatePesticide() {
         if (pesticideTicksLeft > 0) {
             pesticideTicksLeft--;

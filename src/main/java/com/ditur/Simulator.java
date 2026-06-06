@@ -61,6 +61,9 @@ public class Simulator extends Application {
     private static final int CELL_SIZE = 35; // Size of one field in pixels
     private CropGenerator cropGenerator;
 
+    public static int pesticideGlobalCooldown = 100;
+    public static int pesticideGlobalDuration = 20;
+
     @Override
     public void start(Stage stage) {
         init();
@@ -125,7 +128,7 @@ public class Simulator extends Application {
                             random.nextInt(board.getWidth()),
                             random.nextInt(board.getHeight()),
                             board,
-                            50, // przykładoway stan energii początkowej
+                            50,
                             "Pest" + i
                     );
                     agents.add(newPest);
@@ -145,7 +148,7 @@ public class Simulator extends Application {
                             random.nextInt(board.getWidth()),
                             random.nextInt(board.getHeight()),
                             board,
-                            100, // przykładoway stan energii początkowej
+                            100,
                             "Farmer" + i
                     );
                     agents.add(newFarmer);
@@ -194,6 +197,14 @@ public class Simulator extends Application {
         tickCount++;
         view.updateStats(tickCount, harvestedCrops);
 
+        try {
+            pesticideGlobalCooldown = Integer.parseInt(view.getTfPesticideCooldown().getText());
+            pesticideGlobalDuration = Integer.parseInt(view.getTfPesticideDuration().getText());
+        } catch (NumberFormatException e) {
+            pesticideGlobalCooldown = 100;
+            pesticideGlobalDuration = 20;
+        }
+
         List<Agent> babies = new ArrayList<>();
 
         // Step for every living agent
@@ -202,9 +213,8 @@ public class Simulator extends Application {
             a.step();
 
             if (a instanceof Pest) {
-                // Sprawdzamy czy pole, na którym stoi szkodnik ma pestycyd
                 if (board.getField(a.getX(), a.getY()).hasPesticide()) {
-                    agents.remove(i); // Natychmiastowa śmierć
+                    agents.remove(i);
                     continue;
                 }
             }
