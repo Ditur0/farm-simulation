@@ -68,8 +68,6 @@ public class Farmer extends Agent{
 
     }
 
-
-
     private Field findFieldTarget(int viewRadius) {
         Field fieldTarget = null;
         int minDistance = Integer.MAX_VALUE;
@@ -117,8 +115,4 @@ public class Farmer extends Agent{
             }
         }
     }
-
-
-
-
 }

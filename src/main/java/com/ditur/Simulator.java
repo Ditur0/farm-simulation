@@ -28,6 +28,7 @@ public class Simulator extends Application {
             - add RESET BUTTON
             - make pest multiplication !!!!!
             - hwo fast crops lose water
+            - setting class
      */
 
     /*
