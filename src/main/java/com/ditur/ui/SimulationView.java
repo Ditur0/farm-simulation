@@ -42,6 +42,9 @@ public class SimulationView {
 
     private TextField tfCropPercentage;
     private Button btnGenerateCrops;
+
+    private TextField tfPesticideCooldown;
+    private TextField tfPesticideDuration;
     // --------------------------------------------   UI
 
     private HBox mainLayout;
@@ -212,6 +215,31 @@ public class SimulationView {
                         case WHEAT -> { gc.drawImage(imgWheatMature, posX, posY, cellSize, cellSize); }
                         default -> { gc.setFill(Color.GREEN); gc.fillRect(posX, posY, cellSize - 1, cellSize - 1); }
                     }
+                }
+
+                // --- NOWOŚĆ: 3rd layout - PESTICIDE ANIMATION ---
+                if (field.hasPesticide()) {
+                    int ticksLeft = field.getPesticideTicksLeft();
+                    int maxDuration = field.getPesticideMaxDuration();
+
+                    // Obliczanie postępu (od 0.0 do 1.0) -> im mniej ticków zostało, tym większa chmura
+                    double progress = 1.0 - ((double) ticksLeft / maxDuration);
+
+                    // Skalowanie rozmiaru na podstawie postępu animacji
+                    double pSize = cellSize * progress;
+
+                    // Centrowanie rozszerzającego się czerwonego kwadratu wewnątrz kafelka
+                    double pX = posX + (cellSize - pSize) / 2.0;
+                    double pY = posY + (cellSize - pSize) / 2.0;
+
+                    // Rysowanie półprzezroczystego wypełnienia (0.3 oporności/alfa, żeby roślina prześwitywała)
+                    gc.setFill(Color.color(1.0, 0.0, 0.0, 0.3));
+                    gc.fillRect(pX, pY, pSize, pSize);
+
+                    // Rysowanie mocniejszej obramówki pestycydu
+                    gc.setStroke(Color.color(1.0, 0.0, 0.0, 0.6));
+                    gc.setLineWidth(1.5);
+                    gc.strokeRect(pX, pY, pSize, pSize);
                 }
 
                 // GRID

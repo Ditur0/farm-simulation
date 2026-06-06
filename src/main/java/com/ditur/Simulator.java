@@ -201,6 +201,14 @@ public class Simulator extends Application {
             Agent a = agents.get(i);
             a.step();
 
+            if (a instanceof Pest) {
+                // Sprawdzamy czy pole, na którym stoi szkodnik ma pestycyd
+                if (board.getField(a.getX(), a.getY()).hasPesticide()) {
+                    agents.remove(i); // Natychmiastowa śmierć
+                    continue;
+                }
+            }
+
 //            If bee is dead remove from list OPTIONAL
 //            if (a instanceof Bee && ((Bee) a).isDead()) {
 //                agents.remove(i);
@@ -218,6 +226,7 @@ public class Simulator extends Application {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 board.getField(x, y).updateState();
+                board.getField(x, y).updatePesticide();
             }
         }
 

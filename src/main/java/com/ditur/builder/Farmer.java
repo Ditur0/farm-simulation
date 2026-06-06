@@ -17,9 +17,21 @@ public class Farmer extends Agent{
 
     private final Random random = new Random();
 
+    private int pesticideCooldown = 0;
+
     @Override
     public void step() {
         Field currentField = board.getField(x, y);
+
+        // 1. Zmniejszamy cooldown, jeśli jest większy od 0
+        if (pesticideCooldown > 0) {
+            pesticideCooldown--;
+        }
+
+        // 2. Jeśli cooldown wynosi 0, farmer rzuca pestycyd
+        if (pesticideCooldown == 0) {
+            applyPesticideAround();
+        }
 
         if(currentField.getFieldState().equals("maturely") || currentField.getFieldState().equals("mature")) {
             currentField.consumeCrop();
@@ -92,6 +104,27 @@ public class Farmer extends Agent{
             }
         }
         return fieldTarget;
+    }
+
+    private void applyPesticideAround() {
+        int fx = this.getX();
+        int fy = this.getY();
+
+        // Rozprzestrzenianie o 1 kratkę w każdą stronę (promień 1)
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                int targetX = fx + dx;
+                int targetY = fy + dy;
+
+                // Sprawdzamy, czy nie wychodzimy poza mapę
+                if (targetX >= 0 && targetX < board.getWidth() && targetY >= 0 && targetY < board.getHeight()) {
+                    board.getField(targetX, targetY).applyPesticide();
+                }
+            }
+        }
+
+        // Reset cooldownu do 100 ticków
+        this.pesticideCooldown = 100;
     }
 
     public void eliminatePests(List<Agent> allAgents){

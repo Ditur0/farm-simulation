@@ -14,6 +14,9 @@ public class Field {
     private int pesticideDuration;
     private CropType cropType;
 
+    private int pesticideTicksLeft = 0;
+    private int pesticideMaxDuration = 20; // czas trwania
+
     // Maximum constant values for field logic
     private static final int MAX_HYDRATION = 100;
     private static final int DEFAULT_PESTICIDE_DURATION = 5;
@@ -83,10 +86,27 @@ public class Field {
         this.growthTime = 0;
     }
 
-    // Pesticide activation in the field (triggered by farmer)
-    public void activatePesticide() {
-        this.isPesticideActive = true;
-        this.pesticideDuration = DEFAULT_PESTICIDE_DURATION;
+    public void applyPesticide() {
+        this.pesticideTicksLeft = pesticideMaxDuration;
+    }
+
+    public boolean hasPesticide() {
+        return pesticideTicksLeft > 0;
+    }
+
+    public int getPesticideTicksLeft() {
+        return pesticideTicksLeft;
+    }
+
+    public int getPesticideMaxDuration() {
+        return pesticideMaxDuration;
+    }
+
+    // Wywołaj to w swojej istniejącej metodzie updateState() w Field
+    public void updatePesticide() {
+        if (pesticideTicksLeft > 0) {
+            pesticideTicksLeft--;
+        }
     }
 
     // Getters
