@@ -220,8 +220,8 @@ public class SimulationView {
 
             switch (a) {
                 case Bee bee -> gc.drawImage(imgBee, posX+5, posY+5, cellSize-10, cellSize-10);
-                case Pest pest -> gc.drawImage(imgPest, posX+5, posY+5, cellSize-10, cellSize-10);
-                case Farmer farmer -> gc.drawImage(imgFarmer, posX-5, posY-5, cellSize+10, cellSize+10);
+                case Pest pest -> gc.drawImage(imgPest, posX+1, posY+1, cellSize-3, cellSize-3);
+                case Farmer farmer -> gc.drawImage(imgFarmer, posX-3, posY-3, cellSize+3, cellSize+3);
                 default -> {
                 }
             }
