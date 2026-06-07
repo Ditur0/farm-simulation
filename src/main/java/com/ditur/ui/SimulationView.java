@@ -46,6 +46,8 @@ public class SimulationView {
 
     private TextField tfPesticideCooldown;
     private TextField tfPesticideDuration;
+
+    private Button btnReset;
     // --------------------------------------------   UI
 
     private HBox mainLayout;
@@ -97,8 +99,10 @@ public class SimulationView {
 
         btnStart = new Button("START");
         btnPause = new Button("PAUZA");
+        btnReset = new Button("RESET");
         btnStart.setMaxWidth(Double.MAX_VALUE);
         btnPause.setMaxWidth(Double.MAX_VALUE);
+        btnReset.setMaxWidth(Double.MAX_VALUE);
 
         Label speedLabel = new Label("Simulation speed (ms):");
         speedSlider = new Slider(100, 1000, 500);
@@ -148,8 +152,9 @@ public class SimulationView {
 
 
         leftPanel.add(titleLabel, 0, 0, 2, 1);
-        leftPanel.add(btnStart, 0, 1);
-        leftPanel.add(btnPause, 1, 1);
+        HBox controlButtons = new HBox(8, btnStart, btnPause, btnReset);
+        controlButtons.setMaxWidth(Double.MAX_VALUE);
+        leftPanel.add(controlButtons, 0, 1, 2, 1);
         leftPanel.add(speedLabel, 0, 2, 2, 1);
         leftPanel.add(speedSlider, 0, 3, 2, 1);
 
@@ -314,4 +319,5 @@ public class SimulationView {
 
     public TextField getTfPesticideCooldown() { return tfPesticideCooldown; }
     public TextField getTfPesticideDuration() { return tfPesticideDuration; }
+    public Button getBtnReset() { return btnReset; }
 }

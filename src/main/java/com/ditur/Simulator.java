@@ -83,6 +83,7 @@ public class Simulator extends Application {
         // 4. Merge UI with logic
         view.getBtnStart().setOnAction(e -> timeline.play());
         view.getBtnPause().setOnAction(e -> timeline.pause());
+        view.getBtnReset().setOnAction(e -> resetSimulation());
 
         actionOffButtons();
 
@@ -248,6 +249,25 @@ public class Simulator extends Application {
         }
 
         // After updating the logical data draw the image again
+        view.render(board, agents);
+    }
+
+    private void resetSimulation() {
+        if (timeline != null) {
+            timeline.stop();
+        }
+
+        tickCount = 0;
+        harvestedCrops = 0;
+        nextAgentId = 0;
+        view.updateStats(tickCount, harvestedCrops);
+
+        agents.clear();
+
+        board = new Board(20, 22);
+
+        cropGenerator.generateCrops(board, 25);
+
         view.render(board, agents);
     }
 
