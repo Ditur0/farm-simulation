@@ -28,6 +28,7 @@ public class SimulationView {
     // --------------------------------------------   UI
     private Label lblTicks;
     private Label lblCrops;
+    private Label lblPollinated;
 
     private Button btnStart;
     private Button btnPause;
@@ -114,6 +115,7 @@ public class SimulationView {
 
         lblTicks = new Label("Simulation step: 0");
         lblCrops = new Label("Harvested crops: 0");
+        lblPollinated = new Label("Pollinated: 0");
 
         // 1st column
         Label col1Title = new Label("Spawners & Map");
@@ -161,23 +163,24 @@ public class SimulationView {
         leftPanel.add(statsLabel, 0, 4, 2, 1);
         leftPanel.add(lblTicks, 0, 5);
         leftPanel.add(lblCrops, 1, 5);
+        leftPanel.add(lblPollinated, 0, 6, 2, 1);
 
-        leftPanel.add(col1Title, 0, 6);
-        leftPanel.add(beeLabel, 0, 7);
-        leftPanel.add(tfBeeCount, 0, 8);
-        leftPanel.add(btnSpawnBees, 0, 9);
+        leftPanel.add(col1Title, 0, 7);
+        leftPanel.add(beeLabel, 0, 8);
+        leftPanel.add(tfBeeCount, 0, 9);
+        leftPanel.add(btnSpawnBees, 0, 10);
 
-        leftPanel.add(pestLabel, 0, 10);
-        leftPanel.add(tfPestCount, 0, 11);
-        leftPanel.add(btnSpawnPest, 0, 12);
+        leftPanel.add(pestLabel, 0, 11);
+        leftPanel.add(tfPestCount, 0, 12);
+        leftPanel.add(btnSpawnPest, 0, 13);
 
-        leftPanel.add(farmerLabel, 0, 13);
-        leftPanel.add(tfFarmerCount, 0, 14);
-        leftPanel.add(btnSpawnFarmer, 0, 15);
+        leftPanel.add(farmerLabel, 0, 14);
+        leftPanel.add(tfFarmerCount, 0, 15);
+        leftPanel.add(btnSpawnFarmer, 0, 16);
 
-        leftPanel.add(cropLabel, 0, 16);
-        leftPanel.add(tfCropPercentage, 0, 17);
-        leftPanel.add(btnGenerateCrops, 0, 18);
+        leftPanel.add(cropLabel, 0, 17);
+        leftPanel.add(tfCropPercentage, 0, 18);
+        leftPanel.add(btnGenerateCrops, 0, 19);
 
         leftPanel.add(col2Title, 1, 6);
         leftPanel.add(cooldownLabel, 1, 7);
@@ -296,9 +299,10 @@ public class SimulationView {
     }
 
     // Texts update
-    public void updateStats(int ticks, int crops) {
+    public void updateStats(int ticks, int crops, int pollinated) {
         lblTicks.setText("Simulation step: " + ticks);
         lblCrops.setText("Harvested crops: " + crops);
+        lblPollinated.setText("Pollinated crops: " + pollinated);
     }
 
     public HBox getMainLayout() { return mainLayout; }

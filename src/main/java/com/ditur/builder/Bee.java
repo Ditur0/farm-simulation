@@ -2,6 +2,7 @@ package com.ditur.builder;
 
 import com.ditur.Board;
 import com.ditur.Field;
+import com.ditur.Simulator;
 
 import java.util.Random;
 
@@ -27,6 +28,7 @@ public class Bee extends Agent {
             for (int i = 0; i < boostPower; i++) {
                 if (currentField.getFieldState().equals("growing")) {
                     currentField.updateState();
+                    Simulator.pollinatedCrops++;
                 }
             }
         }

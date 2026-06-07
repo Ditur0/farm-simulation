@@ -55,6 +55,7 @@ public class Simulator extends Application {
     // Simulation counters
     private int tickCount = 0;
     public static int harvestedCrops = 0;
+    public static int pollinatedCrops = 0;
 
     private List<Agent> agents;
     private Random random;
@@ -201,7 +202,7 @@ public class Simulator extends Application {
 
     private void performSimulationStep() {
         tickCount++;
-        view.updateStats(tickCount, harvestedCrops);
+        view.updateStats(tickCount, harvestedCrops, pollinatedCrops);
 
         try {
             pesticideGlobalCooldown = Integer.parseInt(view.getTfPesticideCooldown().getText());
@@ -259,8 +260,9 @@ public class Simulator extends Application {
 
         tickCount = 0;
         harvestedCrops = 0;
+        pollinatedCrops = 0;
         nextAgentId = 0;
-        view.updateStats(tickCount, harvestedCrops);
+        view.updateStats(tickCount, harvestedCrops, pollinatedCrops);
 
         agents.clear();
 
