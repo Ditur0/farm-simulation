@@ -162,8 +162,12 @@ public class Simulator extends Application {
         view.getSpeedSlider().valueProperty().addListener((observable, oldValue, newValue) -> {
             boolean wasRunning = timeline.getStatus() == Animation.Status.RUNNING;
             timeline.stop();
-            KeyFrame newFrame = new KeyFrame(Duration.millis(newValue.doubleValue()), event -> performSimulationStep());
+
+            double reversedDelay = 1100.0 - newValue.doubleValue();
+
+            KeyFrame newFrame = new KeyFrame(Duration.millis(reversedDelay), event -> performSimulationStep());
             timeline.getKeyFrames().setAll(newFrame);
+
             if (wasRunning) timeline.play();
         });
 
