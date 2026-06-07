@@ -60,22 +60,38 @@ public class Farmer extends Agent{
             int diffY = targetCrop.getY() - this.y;
 
             if (diffX > board.getWidth() / 2) diffX -= board.getWidth();
-            else if(diffX < -board.getWidth() /2) diffX += board.getWidth();
+            else if (diffX < -board.getWidth() / 2) diffX += board.getWidth();
 
             if (diffY > board.getHeight() / 2) diffY -= board.getHeight();
-            else if(diffY < -board.getHeight() /2) diffY += board.getHeight();
+            else if (diffY < -board.getHeight() / 2) diffY += board.getHeight();
 
-            if (diffX > 0) moveX++;
-            else if (diffX < 0) moveX--;
+            // Random movement of farmer
+            if (diffX != 0 && diffY != 0) {
+                if (random.nextBoolean()) {
+                    moveX += (diffX > 0) ? 1 : -1;
+                } else {
+                    moveY += (diffY > 0) ? 1 : -1;
+                }
+            } else {
+                if (diffX > 0) moveX++;
+                else if (diffX < 0) moveX--;
 
-            if (diffY > 0) moveY++;
-            else if (diffY < 0) moveY--;
+                if (diffY > 0) moveY++;
+                else if (diffY < 0) moveY--;
+            }
+
+            // 30% that farmer will go off track
+            if (random.nextDouble() < 0.30) {
+                moveX += (random.nextInt(3) - 1);
+                moveY += (random.nextInt(3) - 1);
+            }
+
         } else {
+            // Random move when there is no target
             moveX += (random.nextInt(3) - 1);
             moveY += (random.nextInt(3) - 1);
         }
         moveTo(moveX, moveY);
-
     }
 
     private Field findFieldTarget(int viewRadius) {
