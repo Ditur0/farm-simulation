@@ -39,8 +39,8 @@ public class Pest extends Agent{
 
                 switch (cropConsumed) {
                     case CARROT -> energyGained = 5;
-                    case POTATO -> energyGained = 10;
-                    case WHEAT -> energyGained = 15;
+                    case POTATO -> energyGained = 5;
+                    case WHEAT -> energyGained = 5;
                 }
                 this.energy += energyGained;
 
@@ -49,11 +49,9 @@ public class Pest extends Agent{
             currentField.consumeCrop();
         }
 
-        // Rozmnażanie
-
-        if(this.energy >=60 && this.offspring == null){
-
-            this.energy -=30;
+        // Rozmnażanie, dodanie z procentowa szansa na rozmanzanie, zeby nie bylo takie szybki
+        if (this.energy >= 60 && this.offspring == null && random.nextDouble() < 0.10) {
+            this.energy -= 30;
 
             this.offspring = AgentFactory.createPest(
                     random.nextInt(1000),
@@ -62,14 +60,13 @@ public class Pest extends Agent{
                     this.board,
                     30,
                     "baby_pest" // nazwa baby pest zostaje, nie zmieniaj mi jej
-
             );
         }
 
 
         // Targeted movement
 
-        Field targetCrop = findNearsetCrop(5); // Przykładowy zasięg wzroku robala
+        Field targetCrop = findNearsetCrop(5); // Zasieg wzroku robala
 
         int moveX = this.x;
         int moveY = this.y;
@@ -78,21 +75,31 @@ public class Pest extends Agent{
             int diffX = targetCrop.getX() - this.x;
             int diffY = targetCrop.getY() - this.y;
 
-            if (diffX > board.getWidth() / 2) diffX -= board.getWidth();
-            else if(diffX < -board.getWidth() /2) diffX += board.getWidth();
+            if (diffX >= board.getWidth() / 2.0) diffX -= board.getWidth();
+            else if (diffX <= -board.getWidth() / 2.0) diffX += board.getWidth();
 
-            if (diffY > board.getHeight() / 2) diffY -= board.getHeight();
-            else if(diffY < -board.getHeight() /2) diffY += board.getHeight();
+            if (diffY >= board.getHeight() / 2.0) diffY -= board.getHeight();
+            else if (diffY <= -board.getHeight() / 2.0) diffY += board.getHeight();
 
             if (diffX > 0) moveX++;
             else if (diffX < 0) moveX--;
 
             if (diffY > 0) moveY++;
             else if (diffY < 0) moveY--;
+
         } else {
             moveX += (random.nextInt(3) - 1);
             moveY += (random.nextInt(3) - 1);
         }
+
+        moveX = (moveX + board.getWidth()) % board.getWidth();
+        moveY = (moveY + board.getHeight()) % board.getHeight();
+
+        if (moveX == this.x && moveY == this.y) {
+            moveX = (this.x + random.nextInt(3) - 1 + board.getWidth()) % board.getWidth();
+            moveY = (this.y + random.nextInt(3) - 1 + board.getHeight()) % board.getHeight();
+        }
+
         moveTo(moveX, moveY);
     }
 

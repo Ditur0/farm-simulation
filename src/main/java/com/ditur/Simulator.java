@@ -60,6 +60,7 @@ public class Simulator extends Application {
     private Random random;
     private static final int CELL_SIZE = 35; // Size of one field in pixels
     private CropGenerator cropGenerator;
+    private int nextAgentId = 0;
 
     public static int pesticideGlobalCooldown = 100;
     public static int pesticideGlobalDuration = 20;
@@ -105,7 +106,7 @@ public class Simulator extends Application {
                 int count = Integer.parseInt(view.getTfBeeCount().getText());
                 for (int i = 0; i < count; i++) {
                     Bee newBee = AgentFactory.createBee(
-                            agents.size(),
+                            nextAgentId++,
                             random.nextInt(board.getWidth()),
                             random.nextInt(board.getHeight()),
                             board,
@@ -124,7 +125,7 @@ public class Simulator extends Application {
                 int count = Integer.parseInt(view.getTfPestCount().getText());
                 for (int i = 0; i < count; i++) {
                     Pest newPest = AgentFactory.createPest(
-                            agents.size(),
+                            nextAgentId++,
                             random.nextInt(board.getWidth()),
                             random.nextInt(board.getHeight()),
                             board,
@@ -144,7 +145,7 @@ public class Simulator extends Application {
                 int count = Integer.parseInt(view.getTfFarmerCount().getText());
                 for (int i = 0; i < count; i++) {
                     Farmer newFarmer = AgentFactory.createFarmer(
-                            agents.size(),
+                            nextAgentId++,
                             random.nextInt(board.getWidth()),
                             random.nextInt(board.getHeight()),
                             board,
@@ -223,17 +224,19 @@ public class Simulator extends Application {
                 }
             }
 
-//            If bee is dead remove from list OPTIONAL
-//            if (a instanceof Bee && ((Bee) a).isDead()) {
-//                agents.remove(i);
-//            }
-            if(a.getOffspring() != null){
-                agents.addAll(babies);
-            }
-            if (a instanceof Pest && ((Pest) a).isDead()) {
-               agents.remove(i);
+            // Rozmnazanie szkodnikow
+            if (a.getOffspring() != null) {
+                babies.add(a.getOffspring()); // Dodajemy baby do 'zlobka'
             }
 
+            if (a instanceof Pest && ((Pest) a).isDead()) {
+                agents.remove(i);
+            }
+
+        }
+
+        if (!babies.isEmpty()) {
+            agents.addAll(babies);
         }
 
         // Go through all the fields on the board and update their logical states

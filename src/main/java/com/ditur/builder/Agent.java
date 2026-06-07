@@ -31,6 +31,10 @@ public abstract class Agent {
         this.y = wrappedField.getY();
     }
 
+    public void clearOffspring() {
+        this.offspring = null;
+    }
+
     public int getX() { return x; }
     public int getY() { return y; }
     public String getType() { return type; }

@@ -20,23 +20,16 @@ public class Bee extends Agent {
 
         // 1. Check pesticide
         Field currentField = board.getField(x, y);
-//        TODO: make bees avoid this filed when pesticide is active
-//        if (currentField.isPesticideActive()) {
-//            this.isDead = true;
-//            return;
-//        }
 
         // 2. Pollination (if the field grows, we speed it up one extra step)
-        // TODO: speed up process
         if (currentField.getFieldState().equals("growing")) {
-            currentField.updateState();
+            int boostPower = 3;
+            for (int i = 0; i < boostPower; i++) {
+                if (currentField.getFieldState().equals("growing")) {
+                    currentField.updateState();
+                }
+            }
         }
-
-        // 3. Random move
-//        int moveX = x + (random.nextInt(3) - 1);
-//        int moveY = y + (random.nextInt(3) - 1);
-//        moveTo(moveX, moveY);
-
 
         // Omijanie pestycydu
         int newX = this.getX() + random.nextInt(3) - 1; // ruch -1, 0, 1
