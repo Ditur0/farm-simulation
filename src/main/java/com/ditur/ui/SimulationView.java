@@ -123,7 +123,7 @@ public class SimulationView {
         // =========================================================================
         HBox topBar = new HBox();
         topBar.setAlignment(Pos.CENTER);
-        topBar.setPadding(new Insets(10, 0, 25, 0));
+        topBar.setPadding(new Insets(10, 0, 25, 40));
 
         Label titleLabel = new Label();
         Image logoImage = new Image(getClass().getResourceAsStream("/panel/logotype.png"));
@@ -168,6 +168,7 @@ public class SimulationView {
         btnPause.setStyle(btnStyle);
         btnReset.setStyle(btnStyle);
         HBox controlButtons = new HBox(10, btnStart, btnPause, btnReset);
+        controlButtons.setPadding(new Insets(0, 0, 0, 20));
 
         // Box SPAWNERS
         VBox spawnersBox = new VBox(10);
