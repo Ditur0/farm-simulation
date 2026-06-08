@@ -2,7 +2,6 @@ package com.ditur;
 
 import com.ditur.builder.*;
 import com.ditur.crops.CropGenerator;
-import com.ditur.crops.CropType;
 import com.ditur.ui.SimulationView;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -217,6 +216,11 @@ public class Simulator extends Application {
         // Step for every living agent
         for (int i = agents.size() - 1; i >= 0; i--) {
             Agent a = agents.get(i);
+
+            if (a instanceof Farmer) {
+                ((Farmer) a).setAllAgents(agents);
+            }
+
             a.step();
 
             if (a instanceof Pest) {
@@ -229,12 +233,18 @@ public class Simulator extends Application {
             // Rozmnazanie szkodnikow
             if (a.getOffspring() != null) {
                 babies.add(a.getOffspring()); // Dodajemy baby do 'zlobka'
+                a.clearOffspring();
             }
 
+
+        }
+
+        for (int i = 0; i < agents.size(); i++) {
+            Agent a = agents.get(i);
             if (a instanceof Pest && ((Pest) a).isDead()) {
                 agents.remove(i);
+                i--;
             }
-
         }
 
         if (!babies.isEmpty()) {

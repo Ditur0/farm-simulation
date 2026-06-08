@@ -31,9 +31,7 @@ public abstract class Agent {
         this.y = wrappedField.getY();
     }
 
-    public void clearOffspring() {
-        this.offspring = null;
-    }
+
 
     public int getX() { return x; }
     public int getY() { return y; }
@@ -43,6 +41,9 @@ public abstract class Agent {
     // do dzieciakow
      protected Agent offspring = null;
      public Agent getOffspring() {return offspring; }
-     public void clearOffsprig() {this.offspring = null;}
+     public void clearOffspring() {
+        this.offspring = null;
+    }
+
 
 }

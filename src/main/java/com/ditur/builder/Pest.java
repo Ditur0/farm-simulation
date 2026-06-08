@@ -19,16 +19,17 @@ public class Pest extends Agent{
         if (isDead) return;
         Field currentField = board.getField(x, y);
 
-//        if (currentField.isPesticideActive()) {
-//            this.isDead = true;
-//            return;
-//        }
+        if (currentField.isPesticideActive()) {
+           this.isDead = true;
+            return;
+        }
 
         this.energy--;
         if (energy <= 0) {
             isDead = true;
             return;
         }
+
 
         if (currentField.getFieldState().equals("growing") || currentField.getFieldState().equals("maturely")) {
 
@@ -49,14 +50,15 @@ public class Pest extends Agent{
             currentField.consumeCrop();
         }
 
+
         // Rozmnażanie, dodanie z procentowa szansa na rozmanzanie, zeby nie bylo takie szybki
-        if (this.energy >= 60 && this.offspring == null && random.nextDouble() < 0.10) {
-            this.energy -= 30;
+        if (this.energy >= 50 && this.offspring == null && random.nextDouble() < 0.40) {
+            this.energy -= 20;
 
             this.offspring = AgentFactory.createPest(
                     random.nextInt(1000),
-                    this.x,
-                    this.y,
+                    this.x +2,
+                    this.y +2,
                     this.board,
                     30,
                     "baby_pest" // nazwa baby pest zostaje, nie zmieniaj mi jej
@@ -86,6 +88,11 @@ public class Pest extends Agent{
 
             if (diffY > 0) moveY++;
             else if (diffY < 0) moveY--;
+
+            if (random.nextDouble() < 0.30) {
+                moveX += (random.nextInt(3) - 1);
+                moveY += (random.nextInt(3) - 1);
+            }
 
         } else {
             moveX += (random.nextInt(3) - 1);
@@ -134,6 +141,8 @@ public class Pest extends Agent{
         }
         return closestCrop;
     }
+
+
 
     public void kill(){
         this.isDead = true;
