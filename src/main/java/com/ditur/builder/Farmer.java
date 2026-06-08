@@ -14,6 +14,11 @@ public class Farmer extends Agent{
         super(id, x, y, board, energy, name, type);
     }
 
+    private List<Agent> allAgents;
+
+    public void setAllAgents(List<Agent> allAgents) {
+        this.allAgents = allAgents;
+    }
 
     private final Random random = new Random();
 
@@ -92,6 +97,10 @@ public class Farmer extends Agent{
             moveY += (random.nextInt(3) - 1);
         }
         moveTo(moveX, moveY);
+
+        if (this.allAgents != null) {
+            eliminatePests(this.allAgents);
+        }
     }
 
     private Field findFieldTarget(int viewRadius) {
