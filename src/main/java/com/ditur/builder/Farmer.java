@@ -12,6 +12,7 @@ import java.util.Random;
 public class Farmer extends Agent{
     public Farmer(int id, int x, int y, Board board, int energy, String name, String type) {
         super(id, x, y, board, energy, name, type);
+        this.maxEnergy = energy;
     }
 
     private List<Agent> allAgents;
@@ -24,8 +25,27 @@ public class Farmer extends Agent{
 
     private int pesticideCooldown = 0;
 
+    private int maxEnergy;
+    private boolean isResting = false;
+
+
     @Override
     public void step() {
+
+        if(isResting){
+            this.energy += 5;
+            if(energy >= maxEnergy){
+                this.energy = maxEnergy;
+                isResting = false;
+            }
+            return;
+        }
+        this.energy--;
+        if (energy <= 0) {
+            isResting = true;
+            return;
+        }
+
         Field currentField = board.getField(x, y);
 
         if (pesticideCooldown > 0) {
@@ -53,6 +73,7 @@ public class Farmer extends Agent{
                 case 2 -> seedToPlant = CropType.WHEAT;
             }
             currentField.setCrop(seedToPlant);
+            Simulator.plantedCrops++;
         }
 
         Field targetCrop = findFieldTarget(10); // Przykładowy zasięg wzroku farmera
@@ -167,9 +188,13 @@ public class Farmer extends Agent{
 
                     if(distance <2){
                         pest.kill();
+                        Simulator.pestsKilledByFarmers++;
                     }
                 }
             }
         }
+    }
+    public boolean isResting() {
+        return this.isResting;
     }
 }

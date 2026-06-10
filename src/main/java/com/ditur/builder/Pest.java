@@ -1,6 +1,7 @@
 package com.ditur.builder;
 
 import com.ditur.Board;
+import com.ditur.Simulator;
 import com.ditur.crops.CropType;
 import com.ditur.Field;
 
@@ -63,6 +64,7 @@ public class Pest extends Agent{
                     30,
                     "baby_pest" // nazwa baby pest zostaje, nie zmieniaj mi jej
             );
+            Simulator.pestsBorn++;
         }
 
 
