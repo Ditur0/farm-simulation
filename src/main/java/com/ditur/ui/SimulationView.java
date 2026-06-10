@@ -34,6 +34,11 @@ public class SimulationView {
     private Label lblTicks;
     private Label lblCrops;
     private Label lblPollinated;
+    private Label lblPlanted;
+
+    private Label lblkilledByFarmers;
+    private Label lblkilledByPesticide;
+    private Label lblpestsBorn;
 
     private Button btnStart;
     private Button btnPause;
@@ -72,6 +77,7 @@ public class SimulationView {
     private Image imgFarmer;
     private Image imgPest;
     private Image imgLogo;
+    private Image imgFarmerResting;
     // --------------------------------------------   TEXTURES
 
     public SimulationView(int boardWidth, int boardHeight, int cellSize) {
@@ -285,11 +291,20 @@ public class SimulationView {
         lblTicks = new Label("Simulation step: 0");
         lblCrops = new Label("Harvested crops: 0");
         lblPollinated = new Label("Pollinated: 0");
+        lblPlanted = new Label("Planted: 0");
+        lblkilledByFarmers = new Label("Pests killed by farmers: 0");
+        lblkilledByPesticide = new Label("Pests killed by pesticide: 0");
+        lblpestsBorn = new Label("Pests born: 0");
         String labelFont = "-fx-font-size: 13px; -fx-font-weight: normal;";
         lblTicks.setStyle(labelFont);
         lblCrops.setStyle(labelFont);
         lblPollinated.setStyle(labelFont);
-        statsBox.getChildren().addAll(statsLabel, lblTicks, lblCrops, lblPollinated);
+        lblPlanted.setStyle(labelFont);
+        lblkilledByFarmers.setStyle(labelFont);
+        lblkilledByPesticide.setStyle(labelFont);
+        lblpestsBorn.setStyle(labelFont);
+
+        statsBox.getChildren().addAll(statsLabel, lblTicks, lblCrops, lblPollinated, lblPlanted, lblkilledByFarmers, lblkilledByPesticide,lblpestsBorn);
 
         // Wykresy
         VBox graphsBox = new VBox(12);
@@ -341,6 +356,8 @@ public class SimulationView {
             imgFarmer = new Image(getClass().getResourceAsStream("/agents/farmer.png"));
             imgPest = new Image(getClass().getResourceAsStream("/agents/duck.png"));
             imgLogo = new Image(getClass().getResourceAsStream("/panel/logotype.png"));
+            imgFarmerResting= new Image(getClass().getResourceAsStream("/agents/farmer_resting.png"));
+
         } catch (Exception e) {
             System.out.println("Error while loading textures");
             e.printStackTrace();
@@ -355,7 +372,13 @@ public class SimulationView {
             switch (a) {
                 case Bee bee -> gc.drawImage(imgBee, posX+5, posY+5, cellSize-10, cellSize-10);
                 case Pest pest -> gc.drawImage(imgPest, posX+1, posY+1, cellSize-3, cellSize-3);
-                case Farmer farmer -> gc.drawImage(imgFarmer, posX-3, posY-3, cellSize+3, cellSize+3);
+                case Farmer farmer ->{
+                    if(farmer.isResting()){
+                        gc.drawImage(imgFarmerResting, posX-3, posY-3, cellSize+3, cellSize+3);
+                    }else{
+                        gc.drawImage(imgFarmer, posX-3, posY-3, cellSize+3, cellSize+3);
+                    }
+                }
                 default -> {
                 }
             }
@@ -415,10 +438,14 @@ public class SimulationView {
         }
     }
 
-    public void updateStats(int ticks, int crops, int pollinated) {
+    public void updateStats(int ticks, int crops, int pollinated, int planted, int killedByFarmers, int killedByPesticide, int pestsBorn) {
         lblTicks.setText("Simulation step: " + ticks);
         lblCrops.setText("Harvested crops: " + crops);
         lblPollinated.setText("Pollinated: " + pollinated);
+        lblPlanted.setText("Planted: " + planted);
+        lblkilledByFarmers.setText("Pests killed by farmers: " +  killedByFarmers);
+        lblkilledByPesticide.setText("Pests killed by pesticide: " +  killedByPesticide);
+        lblpestsBorn.setText("Pests born: " +  pestsBorn);
     }
 
     public BorderPane getMainLayout() { return mainLayout; }

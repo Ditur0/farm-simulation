@@ -55,6 +55,11 @@ public class Simulator extends Application {
     private int tickCount = 0;
     public static int harvestedCrops = 0;
     public static int pollinatedCrops = 0;
+    public static int plantedCrops = 0;
+
+    public static int pestsKilledByFarmers = 0;
+    public static int pestsKilledByPesticide = 0;
+    public static int pestsBorn = 0;
 
     private List<Agent> agents;
     private Random random;
@@ -145,12 +150,13 @@ public class Simulator extends Application {
             try {
                 int count = Integer.parseInt(view.getTfFarmerCount().getText());
                 for (int i = 0; i < count; i++) {
+                    int randomMaxEnergy = 30 + random.nextInt(100);
                     Farmer newFarmer = AgentFactory.createFarmer(
                             nextAgentId++,
                             random.nextInt(board.getWidth()),
                             random.nextInt(board.getHeight()),
                             board,
-                            100,
+                            randomMaxEnergy,
                             "Farmer" + i
                     );
                     agents.add(newFarmer);
@@ -201,7 +207,7 @@ public class Simulator extends Application {
 
     private void performSimulationStep() {
         tickCount++;
-        view.updateStats(tickCount, harvestedCrops, pollinatedCrops);
+        view.updateStats(tickCount, harvestedCrops, pollinatedCrops, plantedCrops, pestsKilledByFarmers, pestsKilledByPesticide, pestsBorn);
 
         try {
             pesticideGlobalCooldown = Integer.parseInt(view.getTfPesticideCooldown().getText());
@@ -226,6 +232,7 @@ public class Simulator extends Application {
             if (a instanceof Pest) {
                 if (board.getField(a.getX(), a.getY()).hasPesticide()) {
                     agents.remove(i);
+                    pestsKilledByPesticide++;
                     continue;
                 }
             }
@@ -271,8 +278,12 @@ public class Simulator extends Application {
         tickCount = 0;
         harvestedCrops = 0;
         pollinatedCrops = 0;
+        plantedCrops = 0;
         nextAgentId = 0;
-        view.updateStats(tickCount, harvestedCrops, pollinatedCrops);
+        pestsKilledByFarmers =0;
+        pestsKilledByPesticide = 0;
+        pestsBorn = 0;
+        view.updateStats(tickCount, harvestedCrops, pollinatedCrops, plantedCrops, pestsKilledByFarmers, pestsKilledByPesticide, pestsBorn);
 
         agents.clear();
 
