@@ -4,7 +4,7 @@ public class Settings {
 
     public Settings() {}
 
-    // --- USTAWIENIA OKNA I PLANSZY ---
+    // --- USTAWIENIA PLANSZY ---
     public static final int CELL_SIZE = 35;
     public static final int BOARD_WIDTH = 20;
     public static final int BOARD_HEIGHT = 22;
