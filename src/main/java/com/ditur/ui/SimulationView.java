@@ -10,6 +10,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,6 +62,10 @@ public class SimulationView {
 
     private Button btnReset;
     private CheckBox cbAllowPesticide;
+
+    // Graphs
+    private LineChart<Number, Number> cropChart;
+    private XYChart.Series<Number, Number> cropSeries;
     // --------------------------------------------   UI
 
     private BorderPane mainLayout;
@@ -311,16 +318,47 @@ public class SimulationView {
 
         // Wykres 1
         VBox graph1Container = new VBox(4);
-        Label lblGraph1Name = new Label("Name");
+        Label lblGraph1Name = new Label("Crop Coverage History");
         lblGraph1Name.setAlignment(Pos.CENTER);
         lblGraph1Name.setMaxWidth(Double.MAX_VALUE);
-        lblGraph1Name.setStyle("-fx-font-weight: bold;");
-        Region mockGraph1 = new Region();
-        mockGraph1.setPrefSize(220, 120);
-        mockGraph1.setStyle("-fx-background-color: #C0C0C0; -fx-background-radius: 10px; -fx-border-color: #000000; -fx-border-radius: 10px;");
-        Label lblGraph1Axis = new Label("Pest count");
-        lblGraph1Axis.setStyle("-fx-font-size: 11px; -fx-text-fill: #555555;");
-        graph1Container.getChildren().addAll(lblGraph1Name, mockGraph1, lblGraph1Axis);
+        lblGraph1Name.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #333333;");
+
+        // Osie
+        NumberAxis xAxis = new NumberAxis();
+        NumberAxis yAxis = new NumberAxis();
+
+        xAxis.setLabel("Ticks");
+        yAxis.setLabel("Crops");
+
+        xAxis.setAnimated(false);
+        yAxis.setAnimated(false);
+
+        xAxis.setTickLabelsVisible(false); // Ukrycie liczb
+        xAxis.setTickMarkVisible(false);
+        xAxis.setOpacity(1);
+
+        yAxis.setTickLabelsVisible(false);
+        yAxis.setTickMarkVisible(false);
+        yAxis.setOpacity(1);
+
+        // Inicjalizacja wykresu
+        cropChart = new LineChart<>(xAxis, yAxis);
+        cropChart.setPrefSize(300, 210); // Wymiary wykresu
+        cropChart.setAnimated(false);
+        cropChart.setCreateSymbols(false);
+        cropChart.setLegendVisible(false);
+
+        // Pobranie wygladu wykresu z pliku css
+        try {
+            String cssPath = getClass().getResource("/chart1-style.css").toExternalForm();
+            graph1Container.getStylesheets().add(cssPath);
+        } catch (NullPointerException e) {
+            System.err.println("Nie znaleziono pliku chart1-style.css w folderze resources!");
+        }
+
+        cropSeries = new XYChart.Series<>();
+        cropChart.getData().add(cropSeries);
+        graph1Container.getChildren().addAll(lblGraph1Name, cropChart);
 
         // Wykres 2
         VBox graph2Container = new VBox(4);
@@ -444,6 +482,21 @@ public class SimulationView {
         lblkilledByFarmers.setText("Pests killed by farmers: " +  killedByFarmers);
         lblkilledByPesticide.setText("Pests killed by pesticide: " +  killedByPesticide);
         lblpestsBorn.setText("Pests born: " +  pestsBorn);
+    }
+
+    // Do aktualizacji wykresu
+    public void addCropDataPoint(int tick, int cropCount) {
+        javafx.application.Platform.runLater(() -> {
+            cropSeries.getData().add(new XYChart.Data<>(tick, cropCount));
+
+//            if (cropSeries.getData().size() > 100) {
+//                cropSeries.getData().remove(0);
+//            }
+        });
+    }
+
+    public void clearChart() {
+        cropSeries.getData().clear();
     }
 
     public BorderPane getMainLayout() { return mainLayout; }

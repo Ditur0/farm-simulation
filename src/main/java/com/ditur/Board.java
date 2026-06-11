@@ -49,6 +49,21 @@ public class Board {
         return neighbors;
     }
 
+    // Dla wykresu zliczanie plonow
+    public int countPlantedCrops() {
+        int count = 0;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                String state = getField(x, y).getFieldState();
+                // Zliczamy pola, które aktualnie rosną lub są dojrzałe
+                if (state.equals("growing") || state.equals("mature") || state.equals("maturely")) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     // Getters
     public int getWidth() { return width; }
     public int getHeight() { return height; }

@@ -269,6 +269,10 @@ public class Simulator extends Application {
             }
         }
 
+        // Dla wykresow
+        int currentPlantedCrops = board.countPlantedCrops();
+        view.addCropDataPoint(tickCount, currentPlantedCrops);
+
         // After updating the logical data draw the image again
         view.render(board, agents);
     }
@@ -293,6 +297,8 @@ public class Simulator extends Application {
         board = new Board(20, 22);
 
         cropGenerator.generateCrops(board, 25);
+
+        view.clearChart();
 
         view.render(board, agents);
     }
