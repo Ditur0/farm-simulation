@@ -16,12 +16,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.List;
@@ -66,6 +61,9 @@ public class SimulationView {
     // Graphs
     private LineChart<Number, Number> cropChart;
     private XYChart.Series<Number, Number> cropSeries;
+
+    private LineChart<Number, Number> pestChart;
+    private XYChart.Series<Number, Number> pestSeries;
     // --------------------------------------------   UI
 
     private BorderPane mainLayout;
@@ -350,10 +348,10 @@ public class SimulationView {
 
         // Pobranie wygladu wykresu z pliku css
         try {
-            String cssPath = getClass().getResource("/chart1-style.css").toExternalForm();
+            String cssPath = getClass().getResource("/chart-style.css").toExternalForm();
             graph1Container.getStylesheets().add(cssPath);
         } catch (NullPointerException e) {
-            System.err.println("Nie znaleziono pliku chart1-style.css w folderze resources!");
+            System.err.println("Nie znaleziono pliku chart-style.css w folderze resources!");
         }
 
         cropSeries = new XYChart.Series<>();
@@ -362,16 +360,46 @@ public class SimulationView {
 
         // Wykres 2
         VBox graph2Container = new VBox(4);
-        Label lblGraph2Name = new Label("Name");
+        Label lblGraph2Name = new Label("Pest Population History");
         lblGraph2Name.setAlignment(Pos.CENTER);
         lblGraph2Name.setMaxWidth(Double.MAX_VALUE);
-        lblGraph2Name.setStyle("-fx-font-weight: bold;");
-        Region mockGraph2 = new Region();
-        mockGraph2.setPrefSize(220, 120);
-        mockGraph2.setStyle("-fx-background-color: #C0C0C0; -fx-background-radius: 10px; -fx-border-color: #000000; -fx-border-radius: 10px;");
-        Label lblGraph2Axis = new Label("Crop coverage");
-        lblGraph2Axis.setStyle("-fx-font-size: 11px; -fx-text-fill: #555555;");
-        graph2Container.getChildren().addAll(lblGraph2Name, mockGraph2, lblGraph2Axis);
+        lblGraph2Name.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #333333;");
+
+        // Osie
+        NumberAxis xAxisPest = new NumberAxis();
+        NumberAxis yAxisPest = new NumberAxis();
+
+        xAxisPest.setLabel("Ticks");
+        yAxisPest.setLabel("Pest Count");
+
+        xAxisPest.setAnimated(false);
+        yAxisPest.setAnimated(false);
+
+        xAxisPest.setTickLabelsVisible(false);
+        xAxisPest.setTickMarkVisible(false);
+        yAxisPest.setTickLabelsVisible(false);
+        yAxisPest.setTickMarkVisible(false);
+
+        // Inicjalizajca
+        pestChart = new LineChart<>(xAxisPest, yAxisPest);
+        pestChart.setPrefSize(250, 190);
+        pestChart.setAnimated(false);
+        pestChart.setCreateSymbols(false);
+        pestChart.setLegendVisible(false);
+
+        pestChart.getStyleClass().add("pest-chart");
+
+        pestSeries = new XYChart.Series<>();
+        pestChart.getData().add(pestSeries);
+        graph2Container.getChildren().addAll(lblGraph2Name, pestChart);
+
+        try {
+            String cssPath = getClass().getResource("/chart-style.css").toExternalForm();
+            graph2Container.getStylesheets().add(cssPath);
+        } catch (NullPointerException e) {
+            System.err.println("Nie znaleziono pliku chart-style.css!");
+        }
+
 
         graphsBox.getChildren().addAll(graphsLabel, graph1Container, graph2Container);
         rightPanel.getChildren().addAll(statsBox, graphsBox);
@@ -495,8 +523,19 @@ public class SimulationView {
         });
     }
 
+    public void addPestDataPoint(int tick, int pestCount) {
+        javafx.application.Platform.runLater(() -> {
+            pestSeries.getData().add(new XYChart.Data<>(tick, pestCount));
+
+            // if (pestSeries.getData().size() > 100) {
+            //     pestSeries.getData().remove(0);
+            // }
+        });
+    }
+
     public void clearChart() {
         cropSeries.getData().clear();
+        pestSeries.getData().clear();
     }
 
     public BorderPane getMainLayout() { return mainLayout; }

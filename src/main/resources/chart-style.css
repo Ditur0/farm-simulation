@@ -32,3 +32,8 @@
     -fx-font-size: 11px;
     -fx-font-weight: bold;
 }
+
+.pest-chart .default-color0.chart-series-line {
+    -fx-stroke: #b71c1c; /* czerwony kolor dla szkodnikow */
+    -fx-stroke-width: 3px;
+}

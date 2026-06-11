@@ -17,36 +17,6 @@ import java.util.Random;
 
 public class Simulator extends Application {
 
-    /*
-        TODO:
-            - add eliminate pest from farmer
-            - Pesticide class for Farmer
-            - Harvest class for Farmer
-            - GRAPHS !!!!
-            - Repair slider speed !!!
-            - add RESET BUTTON
-            - make pest multiplication !!!!!
-            - hwo fast crops lose water
-            - setting class
-     */
-
-    /*
-        DOING:
-
-     */
-
-    /*
-        DONE:
-            - add Agents abstract class
-            - add Bee class
-            - add agents builder factory class
-            - Optional class for drawing UI
-            - add Pest class
-            - add random method to generate randomly crops to all cells
-            - add Farmer class
-            - add better colors for crops and field and optimal growing time
-     */
-
     private Board board;
     private SimulationView view;
     private Timeline timeline;
@@ -270,8 +240,13 @@ public class Simulator extends Application {
         }
 
         // Dla wykresow
+        // Crops
         int currentPlantedCrops = board.countPlantedCrops();
         view.addCropDataPoint(tickCount, currentPlantedCrops);
+
+        // Pests
+        long currentPestCount = agents.stream().filter(a -> a instanceof Pest).count();
+        view.addPestDataPoint(tickCount, (int) currentPestCount);
 
         // After updating the logical data draw the image again
         view.render(board, agents);
