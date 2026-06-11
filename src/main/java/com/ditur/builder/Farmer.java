@@ -52,7 +52,7 @@ public class Farmer extends Agent{
             pesticideCooldown--;
         }
 
-        if (pesticideCooldown == 0) {
+        if (pesticideCooldown == 0 && Simulator.allowPesticide) {
             applyPesticideAround();
         }
 

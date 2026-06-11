@@ -10,10 +10,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -61,6 +58,7 @@ public class SimulationView {
     private Button btnSetDuration;
 
     private Button btnReset;
+    private CheckBox cbAllowPesticide;
     // --------------------------------------------   UI
 
     private BorderPane mainLayout;
@@ -232,21 +230,21 @@ public class SimulationView {
         Label cooldownLabel = new Label("Pesticide Cooldown:");
         tfPesticideCooldown = new TextField("100");
         tfPesticideCooldown.setPrefWidth(50);
-        btnSetCooldown = new Button("Set");
-        btnSetCooldown.setStyle(greenBtnStyle);
 
         Label durationLabel = new Label("Pesticide Duration:");
         tfPesticideDuration = new TextField("20");
         tfPesticideDuration.setPrefWidth(50);
-        btnSetDuration = new Button("Set");
-        btnSetDuration.setStyle(greenBtnStyle);
+
+        cbAllowPesticide = new CheckBox("Allow Farmers to use pesticide");
+        cbAllowPesticide.setSelected(true);
+        cbAllowPesticide.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #333333;");
 
         pesticideGrid.add(cooldownLabel, 0, 0);
         pesticideGrid.add(tfPesticideCooldown, 1, 0);
-        pesticideGrid.add(btnSetCooldown, 2, 0);
         pesticideGrid.add(durationLabel, 0, 1);
         pesticideGrid.add(tfPesticideDuration, 1, 1);
-        pesticideGrid.add(btnSetDuration, 2, 1);
+        pesticideGrid.add(cbAllowPesticide, 0, 2, 2, 1);
+
         pesticideBox.getChildren().addAll(pesticideTitle, pesticideGrid);
 
         // Box MAP
@@ -465,4 +463,5 @@ public class SimulationView {
     public Button getBtnSetCooldown() { return btnSetCooldown; }
     public Button getBtnSetDuration() { return btnSetDuration; }
     public Button getBtnReset() { return btnReset; }
+    public CheckBox getCbAllowPesticide() { return cbAllowPesticide; }
 }

@@ -69,6 +69,7 @@ public class Simulator extends Application {
 
     public static int pesticideGlobalCooldown = 100;
     public static int pesticideGlobalDuration = 20;
+    public static boolean allowPesticide = true;
 
     @Override
     public void start(Stage stage) {
@@ -216,6 +217,8 @@ public class Simulator extends Application {
             pesticideGlobalCooldown = 100;
             pesticideGlobalDuration = 20;
         }
+
+        allowPesticide = view.getCbAllowPesticide().isSelected();
 
         List<Agent> babies = new ArrayList<>();
 
