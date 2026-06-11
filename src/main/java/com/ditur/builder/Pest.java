@@ -1,6 +1,7 @@
 package com.ditur.builder;
 
 import com.ditur.Board;
+import com.ditur.Settings;
 import com.ditur.Simulator;
 import com.ditur.crops.CropType;
 import com.ditur.Field;
@@ -40,9 +41,9 @@ public class Pest extends Agent{
                 int energyGained = 0;
 
                 switch (cropConsumed) {
-                    case CARROT -> energyGained = 5;
-                    case POTATO -> energyGained = 5;
-                    case WHEAT -> energyGained = 5;
+                    case CARROT -> energyGained = Settings.ENERGY_GAINED_CARROT;
+                    case POTATO -> energyGained = Settings.ENERGY_GAINED_POTATO;
+                    case WHEAT -> energyGained = Settings.ENERGY_GAINED_WHEAT;
                 }
                 this.energy += energyGained;
 
@@ -53,15 +54,15 @@ public class Pest extends Agent{
 
 
         // Rozmnażanie, dodanie z procentowa szansa na rozmanzanie, zeby nie bylo takie szybki
-        if (this.energy >= 50 && this.offspring == null && random.nextDouble() < 0.40) {
-            this.energy -= 20;
+        if (this.energy >= Settings.ENERGY_TO_MULTIPLICATION && this.offspring == null && random.nextDouble() < Settings.RANDOM_FACTOR_REPRODUCTION) {
+            this.energy -= Settings.ENERGY_TAKEN_MULTIPLICATION; // Zabranie energi po rozmnozneiu
 
             this.offspring = AgentFactory.createPest(
                     random.nextInt(1000),
-                    this.x +2,
+                    this.x +2, // Przesueniecie na inne pole zeb nie byly na tym samym polu
                     this.y +2,
                     this.board,
-                    30,
+                    Settings.BABYPEST_START_ENERGY,
                     "baby_pest" // nazwa baby pest zostaje, nie zmieniaj mi jej
             );
             Simulator.pestsBorn++;
@@ -70,7 +71,7 @@ public class Pest extends Agent{
 
         // Targeted movement
 
-        Field targetCrop = findNearsetCrop(5); // Zasieg wzroku robala
+        Field targetCrop = findNearsetCrop(Settings.PEST_VIEW_RADIUS); // Zasieg wzroku robala
 
         int moveX = this.x;
         int moveY = this.y;

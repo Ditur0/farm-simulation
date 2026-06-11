@@ -2,6 +2,7 @@ package com.ditur.builder;
 
 import com.ditur.Board;
 import com.ditur.Field;
+import com.ditur.Settings;
 import com.ditur.Simulator;
 
 import java.util.Random;
@@ -24,7 +25,7 @@ public class Bee extends Agent {
 
         // 2. Pollination (if the field grows, we speed it up one extra step)
         if (currentField.getFieldState().equals("growing")) {
-            int boostPower = 3;
+            int boostPower = Settings.BOOST_POLLINATE; // Dodanie 3 tickow rosniecia po zapyleniu
             for (int i = 0; i < boostPower; i++) {
                 if (currentField.getFieldState().equals("growing")) {
                     currentField.updateState();

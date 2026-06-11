@@ -15,11 +15,10 @@ public class Field {
     private CropType cropType;
 
     private int pesticideTicksLeft = 0;
-    private int pesticideMaxDuration = 20; // czas trwania
+    private int pesticideMaxDuration; // czas trwania
 
     // Maximum constant values for field logic
     private static final int MAX_HYDRATION = 100;
-    private static final int DEFAULT_PESTICIDE_DURATION = 5;
 
     public Field(int x, int y) {
         this.x = x;

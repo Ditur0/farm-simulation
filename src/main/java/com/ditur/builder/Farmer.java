@@ -1,6 +1,7 @@
 package com.ditur.builder;
 
 import com.ditur.Board;
+import com.ditur.Settings;
 import com.ditur.crops.CropType;
 import com.ditur.Field;
 import com.ditur.Simulator;
@@ -33,7 +34,7 @@ public class Farmer extends Agent{
     public void step() {
 
         if(isResting){
-            this.energy += 5;
+            this.energy += Settings.ENERGY_RECOVER;
             if(energy >= maxEnergy){
                 this.energy = maxEnergy;
                 isResting = false;
@@ -76,7 +77,7 @@ public class Farmer extends Agent{
             Simulator.plantedCrops++;
         }
 
-        Field targetCrop = findFieldTarget(10); // Przykładowy zasięg wzroku farmera
+        Field targetCrop = findFieldTarget(Settings.FARMER_VIEW_RADIUS); // Przykładowy zasięg wzroku farmera
 
         int moveX = this.x;
         int moveY = this.y;
@@ -107,7 +108,7 @@ public class Farmer extends Agent{
             }
 
             // 30% that farmer will go off track
-            if (random.nextDouble() < 0.30) {
+            if (random.nextDouble() < Settings.FARMER_GO_OFF_TRACK) {
                 moveX += (random.nextInt(3) - 1);
                 moveY += (random.nextInt(3) - 1);
             }

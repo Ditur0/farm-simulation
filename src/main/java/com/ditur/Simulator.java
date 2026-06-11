@@ -33,12 +33,12 @@ public class Simulator extends Application {
 
     private List<Agent> agents;
     private Random random;
-    private static final int CELL_SIZE = 35; // Size of one field in pixels
+    private static final int CELL_SIZE = Settings.CELL_SIZE; // Size of one field in pixels
     private CropGenerator cropGenerator;
     private int nextAgentId = 0;
 
-    public static int pesticideGlobalCooldown = 100;
-    public static int pesticideGlobalDuration = 20;
+    public static int pesticideGlobalCooldown = Settings.PESTICIDE_COOLDOWN;
+    public static int pesticideGlobalDuration = Settings.PESTICIDE_DURATION;
     public static boolean allowPesticide = true;
 
     @Override
@@ -46,9 +46,9 @@ public class Simulator extends Application {
         init();
 
         // 1. Board init
-        board = new Board(20, 22);
+        board = new Board(Settings.BOARD_WIDTH, Settings.BOARD_HEIGHT);
 
-        cropGenerator.generateCrops(board, 25);
+        cropGenerator.generateCrops(board, Settings.START_FORESTATION);
 
         // 2. UI init
         view = new SimulationView(board.getWidth(), board.getHeight(), CELL_SIZE);
@@ -106,7 +106,7 @@ public class Simulator extends Application {
                             random.nextInt(board.getWidth()),
                             random.nextInt(board.getHeight()),
                             board,
-                            50,
+                            Settings.PEST_START_ENERGY,
                             "Pest" + i
                     );
                     agents.add(newPest);
@@ -184,8 +184,8 @@ public class Simulator extends Application {
             pesticideGlobalCooldown = Integer.parseInt(view.getTfPesticideCooldown().getText());
             pesticideGlobalDuration = Integer.parseInt(view.getTfPesticideDuration().getText());
         } catch (NumberFormatException e) {
-            pesticideGlobalCooldown = 100;
-            pesticideGlobalDuration = 20;
+            pesticideGlobalCooldown = Settings.PESTICIDE_COOLDOWN;
+            pesticideGlobalDuration = Settings.PESTICIDE_DURATION;
         }
 
         allowPesticide = view.getCbAllowPesticide().isSelected();
@@ -269,9 +269,9 @@ public class Simulator extends Application {
 
         agents.clear();
 
-        board = new Board(20, 22);
+        board = new Board(Settings.BOARD_WIDTH, Settings.BOARD_HEIGHT);
 
-        cropGenerator.generateCrops(board, 25);
+        cropGenerator.generateCrops(board, Settings.START_FORESTATION);
 
         view.clearChart();
 
