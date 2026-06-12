@@ -3,6 +3,8 @@ package com.ditur;
 import java.util.ArrayList;
 import java.util.List;
 
+// Reprezentuje dwuwymiarowa plansze symulacji
+// Klasa implementuje torusa (zawijanie krawedzi planszy) oraz algorytm wyszukania sasiadow
 public class Board {
     private final int width;
     private final int height;
@@ -24,15 +26,12 @@ public class Board {
         }
     }
 
+    // Pobiera pole o podanyc wsolrzednych
+    // Implementuje torusa - przeniesienie na przeciwna strone planszy
     public Field getField(int x, int y) {
         int wrappedX = (x % width + width) % width;
         int wrappedY = (y % height + height) % height;
         return grid[wrappedX][wrappedY];
-    }
-
-    // Checks if coordinates fit in the grid without wrapping (helper)
-    public boolean inBounds(int x, int y) {
-        return x >= 0 && x < width && y >= 0 && y < height;
     }
 
     // Gets a list of fields within a given radius (Moore neighborhood including a torus)
@@ -49,9 +48,11 @@ public class Board {
         return neighbors;
     }
 
-    // Dla wykresu zliczanie plonow
+    // Zlicza pola na ktorych znajduje sie roslina
+    // Metoda uzwyana do generowania wykresu
     public int countPlantedCrops() {
         int count = 0;
+
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 String state = getField(x, y).getFieldState();
