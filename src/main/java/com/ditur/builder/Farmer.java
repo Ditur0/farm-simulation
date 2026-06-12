@@ -5,34 +5,34 @@ import com.ditur.Settings;
 import com.ditur.crops.CropType;
 import com.ditur.Field;
 import com.ditur.Simulator;
-
-
 import java.util.List;
 import java.util.Random;
 
+// Reprezentuje agenta typu Farmer
+// Farmer dba o uprawy, sieje, zbiera dojrzale rosliny, aplikuje pestycyd
+// eleminuje szkodniki znajdujace sie w sasiedztwie
 public class Farmer extends Agent{
+
+    private final Random random = new Random();
+    private int pesticideCooldown = 0;
+    private int maxEnergy;
+    private boolean isResting = false;
+    private List<Agent> allAgents;
+
     public Farmer(int id, int x, int y, Board board, int energy, String name, String type) {
         super(id, x, y, board, energy, name, type);
         this.maxEnergy = energy;
     }
 
-    private List<Agent> allAgents;
-
     public void setAllAgents(List<Agent> allAgents) {
         this.allAgents = allAgents;
     }
 
-    private final Random random = new Random();
-
-    private int pesticideCooldown = 0;
-
-    private int maxEnergy;
-    private boolean isResting = false;
-
-
+    // Zachowanie farmera w jendym kroku symulacji
     @Override
     public void step() {
 
+        // Logika odpoczynku i regenracji
         if(isResting){
             this.energy += Settings.ENERGY_RECOVER;
             if(energy >= maxEnergy){
@@ -41,6 +41,8 @@ public class Farmer extends Agent{
             }
             return;
         }
+
+        // Koszt energi z kazdym ruchem
         this.energy--;
         if (energy <= 0) {
             isResting = true;
@@ -49,6 +51,7 @@ public class Farmer extends Agent{
 
         Field currentField = board.getField(x, y);
 
+        // Logika odnawiania i aplikacji pestycydu
         if (pesticideCooldown > 0) {
             pesticideCooldown--;
         }
@@ -57,13 +60,14 @@ public class Farmer extends Agent{
             applyPesticideAround();
         }
 
+        // Obsluga uprawy na polu na ktorym stoi farmer
         if(currentField.getFieldState().equals("maturely") || currentField.getFieldState().equals("mature")) {
+            // Zbior plonow
             currentField.consumeCrop();
             Simulator.harvestedCrops++;
         }
-        if(currentField.getFieldState().equals("growing")&& currentField.getHydrationLevel() <4){
-            currentField.waterField();
-        }
+
+        // Sianie losowej rosliny
         if(currentField.getFieldState().equals("empty") && currentField.getCropType() == CropType.NONE) {
             int randomSeed = random.nextInt(3);
 
@@ -92,7 +96,7 @@ public class Farmer extends Agent{
             if (diffY > board.getHeight() / 2) diffY -= board.getHeight();
             else if (diffY < -board.getHeight() / 2) diffY += board.getHeight();
 
-            // Random movement of farmer
+            // Ruch po skosie lub losowy wybór osi X/Y
             if (diffX != 0 && diffY != 0) {
                 if (random.nextBoolean()) {
                     moveX += (diffX > 0) ? 1 : -1;
@@ -125,6 +129,7 @@ public class Farmer extends Agent{
         }
     }
 
+    // Szukanie nablizszego pola wymagajacego akcji (puste, dojrzale)
     private Field findFieldTarget(int viewRadius) {
         Field fieldTarget = null;
         int minDistance = Integer.MAX_VALUE;
@@ -151,6 +156,7 @@ public class Farmer extends Agent{
         return fieldTarget;
     }
 
+    // Rozpylanie pestycydu w promieniu 1 pola wokol pozycjji farmera
     private void applyPesticideAround() {
         int fx = this.getX();
         int fy = this.getY();

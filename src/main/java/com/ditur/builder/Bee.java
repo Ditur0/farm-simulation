@@ -7,19 +7,21 @@ import com.ditur.Simulator;
 
 import java.util.Random;
 
+// Reprezentuje agetna Bee
+// Pszczoly poruszaja sie losowo po planszy, unikaja pol z pestycydem
+// Przyspieszaja wzrost upraw roslin po przez zapylenie
+// Nie umieraja
 public class Bee extends Agent {
 
     private final Random random = new Random();
-    private boolean isDead = false;
 
     public Bee(int id, int x, int y, Board board, int energy, String name) {
         super(id, x, y, board, energy, name, "BEE");
     }
 
+    // Zachownanie psczoly w pojedynczym kroku symulacji
     @Override
     public void step() {
-        if (isDead) return;
-
         // 1. Check pesticide
         Field currentField = board.getField(x, y);
 
@@ -43,9 +45,5 @@ public class Bee extends Agent {
                 moveTo(newX, newY);
             }
         }
-    }
-
-    public boolean isDead() {
-        return isDead;
     }
 }

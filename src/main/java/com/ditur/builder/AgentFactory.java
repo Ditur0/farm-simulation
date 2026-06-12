@@ -2,6 +2,8 @@ package com.ditur.builder;
 
 import com.ditur.Board;
 
+// Wzorzec projektowy Factory
+// Tworzy konkretne typy agentow
 public class AgentFactory {
 
     public static Bee createBee(int id, int x, int y, Board board, String name) {
@@ -14,6 +16,7 @@ public class AgentFactory {
                 name
         );
     }
+
     public static Pest createPest(int id, int x, int y, Board board, int energy, String name){
         return new Pest(
                 id,
@@ -25,6 +28,7 @@ public class AgentFactory {
                 "PEST"
         );
     }
+
     public static Farmer createFarmer(int id, int x, int y, Board board, int energy, String name){
         return new Farmer(
                 id,
@@ -36,5 +40,4 @@ public class AgentFactory {
                 "FARMER"
         );
     }
-
 }

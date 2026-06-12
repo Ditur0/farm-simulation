@@ -21,9 +21,14 @@ import javafx.scene.paint.Color;
 
 import java.util.List;
 
+// Odpowiada za UI aplikacji
+// Tworzy uklad okna w JavaFX, laduje tekstury, rysuje siatke pol i agentow
+// Aktualizuje statystyki i wykresy
 public class SimulationView {
 
     private Canvas canvas;
+    private BorderPane mainLayout;
+    private final int cellSize;
 
     // --------------------------------------------   UI
     private Label lblTicks;
@@ -52,22 +57,16 @@ public class SimulationView {
 
     private TextField tfPesticideCooldown;
     private TextField tfPesticideDuration;
-    private Button btnSetCooldown;
-    private Button btnSetDuration;
 
     private Button btnReset;
     private CheckBox cbAllowPesticide;
 
-    // Graphs
+    // --- Wykresy ---
     private LineChart<Number, Number> cropChart;
     private XYChart.Series<Number, Number> cropSeries;
 
     private LineChart<Number, Number> pestChart;
     private XYChart.Series<Number, Number> pestSeries;
-    // --------------------------------------------   UI
-
-    private BorderPane mainLayout;
-    private final int cellSize;
 
     // --------------------------------------------   TEXTURES
     private Image imgCarrotGrowing;
@@ -79,28 +78,30 @@ public class SimulationView {
     private Image imgBee;
     private Image imgFarmer;
     private Image imgPest;
-    private Image imgLogo;
     private Image imgFarmerResting;
-    // --------------------------------------------   TEXTURES
 
     public SimulationView(int boardWidth, int boardHeight, int cellSize) {
         this.cellSize = cellSize;
-
         loadAllTextures();
-
         canvas = buildInterface(boardWidth, boardHeight, cellSize);
     }
 
+    // Glowna metoda rysujaca caly swiat symuacji
+    // Czysci ekrna, ansoi plansze i agentow
     public void render(Board board, List<Agent> agents) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
+        // Czyszczenie poprzedniej klatki symulacji
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
+        // Rysowanie siatki i roslin
         drawGridAndFields(board, gc);
 
+        // Rysowanie agentow
         drawAgents(agents, gc);
     }
 
+    // Inicjalizuje, pozycjonuje i naklada styl na wsyztskie komponenty graficzne JavaFx
     private Canvas buildInterface(int boardWidth, int boardHeight, int cellSize) {
         mainLayout = new BorderPane();
         mainLayout.setPadding(new Insets(20));
@@ -121,9 +122,7 @@ public class SimulationView {
 
         VBox canvasContainer = new VBox(canvas);
         canvasContainer.setAlignment(Pos.CENTER);
-
         canvasContainer.setPadding(new Insets(3)); // Border wokol synulacji
-
         canvasContainer.setStyle("-fx-background-color: #232323;");
         mainLayout.setCenter(canvasContainer);
 
@@ -145,7 +144,6 @@ public class SimulationView {
         StackPane logoContainer = new StackPane(titleLabel);
         logoContainer.setPrefHeight(50);
         logoContainer.setStyle("-fx-background-color: #BDBDBD; -fx-background-radius: 6px; -fx-border-color: #000000; -fx-border-radius: 6px; -fx-border-width: 1px;");
-
         logoContainer.prefWidthProperty().bind(canvasContainer.widthProperty());
 
         topBar.getChildren().add(logoContainer);
@@ -346,14 +344,6 @@ public class SimulationView {
         cropChart.setCreateSymbols(false);
         cropChart.setLegendVisible(false);
 
-        // Pobranie wygladu wykresu z pliku css
-        try {
-            String cssPath = getClass().getResource("/chart-style.css").toExternalForm();
-            graph1Container.getStylesheets().add(cssPath);
-        } catch (NullPointerException e) {
-            System.err.println("Nie znaleziono pliku chart-style.css w folderze resources!");
-        }
-
         cropSeries = new XYChart.Series<>();
         cropChart.getData().add(cropSeries);
         graph1Container.getChildren().addAll(lblGraph1Name, cropChart);
@@ -393,13 +383,13 @@ public class SimulationView {
         pestChart.getData().add(pestSeries);
         graph2Container.getChildren().addAll(lblGraph2Name, pestChart);
 
+        // Pobranie wygladu wykresu z pliku css
         try {
             String cssPath = getClass().getResource("/chart-style.css").toExternalForm();
-            graph2Container.getStylesheets().add(cssPath);
+            graph1Container.getStylesheets().add(cssPath);
         } catch (NullPointerException e) {
-            System.err.println("Nie znaleziono pliku chart-style.css!");
+            System.err.println("Nie znaleziono pliku chart-style.css w folderze resources!");
         }
-
 
         graphsBox.getChildren().addAll(graphsLabel, graph1Container, graph2Container);
         rightPanel.getChildren().addAll(statsBox, graphsBox);
@@ -408,6 +398,7 @@ public class SimulationView {
         return canvas;
     }
 
+    // Bezpiecnzie laduje zasoby graficzne tekstur roslin i agentow
     private void loadAllTextures() {
         try {
             imgCarrotGrowing = new Image(getClass().getResourceAsStream("/carrot/tile002.png"));
@@ -419,7 +410,6 @@ public class SimulationView {
             imgBee = new Image(getClass().getResourceAsStream("/agents/bee.png"));
             imgFarmer = new Image(getClass().getResourceAsStream("/agents/farmer.png"));
             imgPest = new Image(getClass().getResourceAsStream("/agents/duck.png"));
-            imgLogo = new Image(getClass().getResourceAsStream("/panel/logotype.png"));
             imgFarmerResting= new Image(getClass().getResourceAsStream("/agents/farmer_resting.png"));
 
         } catch (Exception e) {
@@ -449,6 +439,7 @@ public class SimulationView {
         }
     }
 
+    // Iteruje przez plansze, rysuje kolor podloza, teksture rosliny oraz pestycyd
     private void drawGridAndFields(Board board, GraphicsContext gc) {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -480,6 +471,7 @@ public class SimulationView {
                     }
                 }
 
+                // Animacja rochodzacego sie pestycydu
                 if (field.hasPesticide()) {
                     int ticksLeft = field.getPesticideTicksLeft();
                     int maxDuration = field.getPesticideMaxDuration();
@@ -502,6 +494,7 @@ public class SimulationView {
         }
     }
 
+    // Aktualizuje statystyki nowymi danymi
     public void updateStats(int ticks, int crops, int pollinated, int planted, int killedByFarmers, int killedByPesticide, int pestsBorn) {
         lblTicks.setText("Simulation step: " + ticks);
         lblCrops.setText("Harvested crops: " + crops);
@@ -512,24 +505,17 @@ public class SimulationView {
         lblpestsBorn.setText("Pests born: " +  pestsBorn);
     }
 
-    // Do aktualizacji wykresu
+    // Wprowadza kolejny punkty danych do wykresu upraw
     public void addCropDataPoint(int tick, int cropCount) {
         javafx.application.Platform.runLater(() -> {
             cropSeries.getData().add(new XYChart.Data<>(tick, cropCount));
-
-//            if (cropSeries.getData().size() > 100) {
-//                cropSeries.getData().remove(0);
-//            }
         });
     }
 
+    // Wprowadza kolejny punkty danych do wykresu szkodikow
     public void addPestDataPoint(int tick, int pestCount) {
         javafx.application.Platform.runLater(() -> {
             pestSeries.getData().add(new XYChart.Data<>(tick, pestCount));
-
-            // if (pestSeries.getData().size() > 100) {
-            //     pestSeries.getData().remove(0);
-            // }
         });
     }
 
@@ -538,6 +524,7 @@ public class SimulationView {
         pestSeries.getData().clear();
     }
 
+    // Getters
     public BorderPane getMainLayout() { return mainLayout; }
     public Button getBtnStart() { return btnStart; }
     public Button getBtnPause() { return btnPause; }
@@ -552,8 +539,6 @@ public class SimulationView {
     public Button getBtnGenerateCrops() { return btnGenerateCrops; }
     public TextField getTfPesticideCooldown() { return tfPesticideCooldown; }
     public TextField getTfPesticideDuration() { return tfPesticideDuration; }
-    public Button getBtnSetCooldown() { return btnSetCooldown; }
-    public Button getBtnSetDuration() { return btnSetDuration; }
     public Button getBtnReset() { return btnReset; }
     public CheckBox getCbAllowPesticide() { return cbAllowPesticide; }
 }
