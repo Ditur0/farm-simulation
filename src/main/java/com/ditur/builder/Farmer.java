@@ -8,27 +8,56 @@ import com.ditur.Simulator;
 import java.util.List;
 import java.util.Random;
 
-// Reprezentuje agenta typu Farmer
-// Farmer dba o uprawy, sieje, zbiera dojrzale rosliny, aplikuje pestycyd
-// eleminuje szkodniki znajdujace sie w sasiedztwie
-public class Farmer extends Agent{
+/**
+ * Reprezentuje agenta typu Farmer.
+ * Farmer dba o uprawy, sieje, zbiera dojrzale rosliny, aplikuje pestycyd
+ * oraz eliminuje szkodniki znajdujace sie w jego bezposrednim sasiedztwie.
+ */
+public class Farmer extends Agent {
 
+    /** Obiekt klasy Random do losowania zasiewow oraz wykonywania nieprzewidywalnych ruchow. */
     private final Random random = new Random();
+
+    /** Licznik czasu oczekiwania na ponowne uzycie pestycydu. */
     private int pesticideCooldown = 0;
+
+    /** Maksymalny poziom energii jaki farmer moze biezaco osiagnac. */
     private int maxEnergy;
+
+    /** Flaga wskazujaca czy farmer aktualnie odpoczywa w celu regeneracji energii. */
     private boolean isResting = false;
+
+    /** Referencja do biezacej listy wszystkich agentow w symulacji. */
     private List<Agent> allAgents;
 
+    /**
+     * Konstruktor klasy Farmer inicjalizujacy podstawowe statystyki oraz tozsamosc agenta.
+     * @param id unikalny identyfikator farmera
+     * @param x poczatkowa wspolrzedna X
+     * @param y poczatkowa wspolrzedna Y
+     * @param board obiekt planszy symulacji
+     * @param energy poczatkowy poziom energii
+     * @param name unikalna nazwa tekstowa farmera
+     * @param type typ identyfikujacy klase agenta
+     */
     public Farmer(int id, int x, int y, Board board, int energy, String name, String type) {
         super(id, x, y, board, energy, name, type);
         this.maxEnergy = energy;
     }
 
+    /**
+     * Ustawia referencje do globalnej listy wszystkich aktywnych agentow symulacji.
+     * @param allAgents lista obiektow typu Agent
+     */
     public void setAllAgents(List<Agent> allAgents) {
         this.allAgents = allAgents;
     }
 
-    // Zachowanie farmera w jendym kroku symulacji
+    /**
+     * Zachowanie farmera w jednym kroku symulacji.
+     * Odpowiada za mechanike odpoczynku, utrate energii, decyzje o oprysku, zbiorach,
+     * zasiewie nowych roslin, wyznaczenie celu podrozy oraz walke ze szkodnikami.
+     */
     @Override
     public void step() {
 
@@ -129,7 +158,12 @@ public class Farmer extends Agent{
         }
     }
 
-    // Szukanie nablizszego pola wymagajacego akcji (puste, dojrzale)
+    /**
+     * Szuka najblizszego pola w promieniu widzenia, ktore wymaga akcji ze strony farmera
+     * (pole puste, wysuszone lub posiadajace dojrzały plon).
+     * @param viewRadius promien pola widzenia rolnika
+     * @return najblizszy obiekt Field spelniajacy kryteria akcji, lub null jesli brak celow
+     */
     private Field findFieldTarget(int viewRadius) {
         Field fieldTarget = null;
         int minDistance = Integer.MAX_VALUE;
@@ -156,7 +190,10 @@ public class Farmer extends Agent{
         return fieldTarget;
     }
 
-    // Rozpylanie pestycydu w promieniu 1 pola wokol pozycjji farmera
+    /**
+     * Rozpyla pestycyd na polu rolnika oraz we wszystkich polach bezposrednio przylegajacych (promien 1).
+     * Pobiera czas trwania z ustawien globalnych i aktywuje cooldown.
+     */
     private void applyPesticideAround() {
         int fx = this.getX();
         int fy = this.getY();
@@ -179,6 +216,11 @@ public class Farmer extends Agent{
         this.pesticideCooldown = Simulator.pesticideGlobalCooldown;
     }
 
+    /**
+     * Skanuje dostarczona liste agentow i eliminuje zywe szkodniki (Pest), ktore znajduja sie
+     * w odleglosci mniejszej niz dwa pola od rolnika.
+     * @param allAgents aktualna lista wszystkich agentow w symulacji
+     */
     public void eliminatePests(List<Agent> allAgents){
         for (Agent agent : allAgents){
             if(agent instanceof Pest){
@@ -201,6 +243,11 @@ public class Farmer extends Agent{
             }
         }
     }
+
+    /**
+     * Sprawdza, czy rolnik odpoczywa z powodu braku energii.
+     * @return true, jesli odpoczywa; false w przeciwnym razie
+     */
     public boolean isResting() {
         return this.isResting;
     }

@@ -7,19 +7,34 @@ import com.ditur.Simulator;
 
 import java.util.Random;
 
-// Reprezentuje agetna Bee
-// Pszczoly poruszaja sie losowo po planszy, unikaja pol z pestycydem
-// Przyspieszaja wzrost upraw roslin po przez zapylenie
-// Nie umieraja
+/**
+ * Reprezentuje agenta typu Bee (Pszczola).
+ * Pszczoly poruszaja sie losowo po planszy, unikaja pol z aktywnym pestycydem,
+ * przyspieszaja wzrost upraw roslin poprzez zapylenie oraz nie umieraja w trakcie symulacji.
+ */
 public class Bee extends Agent {
 
+    /** Obiekt klasy Random sluzacy do generowania losowych kierunkow lotu pszczoly. */
     private final Random random = new Random();
 
+    /**
+     * Konstruktor klasy Bee inicjalizujacy podstawowe parametry pszczoly.
+     * @param id unikalny identyfikator agenta
+     * @param x poczatkowa wspolrzedna X
+     * @param y poczatkowa wspolrzedna Y
+     * @param board obiekt planszy symulacji
+     * @param energy poziom energii agenta
+     * @param name unikalna nazwa tekstowa pszczoly
+     */
     public Bee(int id, int x, int y, Board board, int energy, String name) {
         super(id, x, y, board, energy, name, "BEE");
     }
 
-    // Zachownanie psczoly w pojedynczym kroku symulacji
+    /**
+     * Zachowanie pszczoly w pojedynczym kroku symulacji.
+     * Odpowiada za proces zapylania (przyspieszania wzrostu uprawy na biezacym polu)
+     * oraz wykonanie ruchu z uwzglednieniem omijania pol skazonych pestycydami.
+     */
     @Override
     public void step() {
         // 1. Check pesticide

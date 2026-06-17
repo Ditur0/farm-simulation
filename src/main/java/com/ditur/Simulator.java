@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-// Glowna klasa kontrolujaca przebieg symylacji
-// Odpowiada za petle czasu, zarzadzanie agentami i synchronizuje logike z UI
+/**
+ * Glowna klasa kontrolujaca przebieg symylacji
+ * Odpowiada za petle czasu, zarzadzanie agentami i synchronizuje logike z UI
+ */
 public class Simulator extends Application {
 
     // Konfiguracja renderowania i czasu
@@ -47,6 +49,10 @@ public class Simulator extends Application {
     public static int pesticideGlobalDuration = Settings.PESTICIDE_DURATION;
     public static boolean allowPesticide = true;
 
+    /**
+     * Uruchamia aplikacje i inicjalizuje glowny stan symulacji.
+     * @param stage glowny stage dostarczony przez JavaFX
+     */
     @Override
     public void start(Stage stage) {
         initSimulation();
@@ -71,21 +77,27 @@ public class Simulator extends Application {
         stage.show();
     }
 
-
+    /**
+     * Inicjalizuje podstawowe listy i obiekty pomocnicze symulacji.
+     */
     public void initSimulation() {
         agents = new ArrayList<>();
         random = new Random();
         cropGenerator = new CropGenerator();
     }
 
-    // Podpiecie akcji pod glowne przyciski kontroli symulacji
+    /**
+     * Podpina akcje (start, pause, reset) pod glowne przyciski kontroli symulacji.
+     */
     private void setupControlButtons() {
         view.getBtnStart().setOnAction(e -> timeline.play());
         view.getBtnPause().setOnAction(e -> timeline.pause());
         view.getBtnReset().setOnAction(e -> resetSimulation());
     }
 
-    // Inicjalizacja obslugi zdarzen UI (przyciski dodania agentow, suwak predkosci...)
+    /**
+     * Inicjalizuje obsluge zdarzen UI, w tym przyciski dodawania agentow oraz suwak predkosci.
+     */
     private void setupActionOfButtons() {
         spawnBeesButton();
         spawnPestButton();
@@ -109,6 +121,9 @@ public class Simulator extends Application {
         view.render(board, agents);
     }
 
+    /**
+     * Konfiguruje akcje przycisku odpowiedzialnego za reczne generowanie roslin na planszy.
+     */
     private void generateCropsButton() {
         view.getBtnGenerateCrops().setOnAction(e -> {
             try {
@@ -127,6 +142,9 @@ public class Simulator extends Application {
         });
     }
 
+    /**
+     * Konfiguruje akcje przycisku generujacego okreslona liczbe farmerow w losowych miejscach.
+     */
     private void spawnFarmersButton() {
         view.getBtnSpawnFarmer().setOnAction(e -> {
             try {
@@ -150,6 +168,9 @@ public class Simulator extends Application {
         });
     }
 
+    /**
+     * Konfiguruje akcje przycisku generujacego okreslona liczbe szkodnikow w losowych miejscach.
+     */
     private void spawnPestButton() {
         view.getBtnSpawnPest().setOnAction(e -> {
             try {
@@ -172,6 +193,9 @@ public class Simulator extends Application {
         });
     }
 
+    /**
+     * Konfiguruje akcje przycisku generujacego okreslona liczbe pszczol w losowych miejscach.
+     */
     private void spawnBeesButton() {
         view.getBtnSpawnBees().setOnAction(e -> {
             try {
@@ -193,7 +217,9 @@ public class Simulator extends Application {
         });
     }
 
-    // Konfiguracja petli czasowej
+    /**
+     * Konfiguruje glowna petle czasowa (Timeline) odpowiedzialna za taktowanie symulacji.
+     */
     private void setupSimulationClock() {
         KeyFrame keyFrame = new KeyFrame(Duration.millis(view.getSpeedSlider().getValue()),
                 event -> performSimulationStep());
@@ -201,8 +227,10 @@ public class Simulator extends Application {
         timeline.setCycleCount(Animation.INDEFINITE); // Simulation endless loop
     }
 
-    // Metoda wykonywana z kazdym tickiem symulacji
-    // Zajmuje sie zdazeniami agentow, rozmnazaniem szkodnikow, pestycydy
+    /**
+     * Metoda wykonywana z kazdym tickiem symulacji.
+     * Zajmuje sie zdarzeniami agentow, rozmnazaniem szkodnikow, pestycydami oraz aktualizacja stanu swiata.
+     */
     private void performSimulationStep() {
         tickCount++;
         updatePesticideSettings(); // Pobranie aktualnych ustawien pestycodw z UI
@@ -256,6 +284,9 @@ public class Simulator extends Application {
         updateChartsAndUI();
     }
 
+    /**
+     * Aktualizuje wyswietlane statystyki, dodaje punkty do wykresow oraz odswieza caly widok planszy.
+     */
     private void updateChartsAndUI() {
         view.updateStats(tickCount, harvestedCrops, pollinatedCrops, plantedCrops, pestsKilledByFarmers, pestsKilledByPesticide, pestsBorn);
 
@@ -271,6 +302,9 @@ public class Simulator extends Application {
         view.render(board, agents);
     }
 
+    /**
+     * Przechodzi przez wszystkie pola na planszy i wywoluje aktualizacje ich stanu logicznego.
+     */
     private void updateBoardFields() {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -280,6 +314,9 @@ public class Simulator extends Application {
         }
     }
 
+    /**
+     * Pobiera aktualne wartosci dotyczace pestycydow z pol tekstowych UI i aktualizuje zmienne globalne.
+     */
     private void updatePesticideSettings() {
         try {
             pesticideGlobalCooldown = Integer.parseInt(view.getTfPesticideCooldown().getText());
@@ -291,6 +328,9 @@ public class Simulator extends Application {
         allowPesticide = view.getCbAllowPesticide().isSelected();
     }
 
+    /**
+     * Resetuje stan calej symulacji, czysci listy agentow, zeruje liczniki i generuje swiat na nowo.
+     */
     private void resetSimulation() {
         if (timeline != null) {
             timeline.stop();
@@ -316,6 +356,10 @@ public class Simulator extends Application {
         view.render(board, agents);
     }
 
+    /**
+     * Glowna metoda uruchamiajaca aplikacje.
+     * @param args argumenty linii polecen
+     */
     public static void main(String[] args) {
         launch();
     }

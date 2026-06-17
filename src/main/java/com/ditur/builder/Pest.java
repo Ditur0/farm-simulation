@@ -9,19 +9,37 @@ import com.ditur.Field;
 import java.util.List;
 import java.util.Random;
 
-// Reprezentuje agenta typu Szkodnik
-// Szkodniki zuzywaja energie w kazdym kroku, szukaja najblizszych upraw w swoim polu widzenia
-// Zjadaja je w celu odzyskania energii oraz rozmnazja sie po osiagnieciu odpowiedniego poziomu energi
-public class Pest extends Agent{
+/**
+ * Reprezentuje agenta typu Szkodnik.
+ * Szkodniki zuzywaja energie w kazdym kroku, szukaja najblizszych upraw w swoim polu widzenia,
+ * zjadaja je w celu odzyskania energii oraz rozmnazaja sie po osiagnieciu odpowiedniego poziomu energii.
+ */
+public class Pest extends Agent {
 
+    /** Obiekt klasy Random do generowania losowych ruchow i szansy na reprodukcje. */
     private final Random random = new Random();
+
+    /** Flaga okreslajaca, czy szkodnik jest martwy. */
     private boolean isDead = false;
 
+    /**
+     * Konstruktor klasy Pest inicjalizujacy parametry szkodnika.
+     * @param id unikalny identyfikator agenta
+     * @param x poczatkowa wspolrzedna X
+     * @param y poczatkowa wspolrzedna Y
+     * @param board obiekt planszy symulacji
+     * @param energy biezacy poziom energii
+     * @param name nazwa agenta
+     * @param type typ agenta
+     */
     public Pest(int id, int x, int y, Board board, int energy, String name, String type) {
         super(id, x, y, board, energy, name, type);
     }
 
-    // Zachowanie szkodnika w jendym kroku symulacji
+    /**
+     * Zachowanie szkodnika w jednym kroku symulacji.
+     * Odpowiada za sprawdzenie zycia, utrate energii, konsumpcje roslin, rozmnazanie oraz ruch w kierunku jedzenia.
+     */
     @Override
     public void step() {
         if (isDead) return;
@@ -30,7 +48,7 @@ public class Pest extends Agent{
 
         // Sprawdzanie kontaktu z pestycydem
         if (currentField.isPesticideActive()) {
-           this.isDead = true;
+            this.isDead = true;
             return;
         }
 
@@ -122,11 +140,19 @@ public class Pest extends Agent{
         moveTo(moveX, moveY);
     }
 
+    /**
+     * Sprawdza, czy szkodnik jest martwy.
+     * @return true, jesli szkodnik stracil energie, wszedl w pestycyd lub zostal zabity; false w przeciwnym razie
+     */
     public boolean isDead() {
         return isDead;
     }
 
-    // Finding closest crops
+    /**
+     * Wyszukuje najblizsza uprawe w zadanym promieniu widzenia z uwzglednieniem geometrii torusa.
+     * @param viewRadius promien pola widzenia szkodnika
+     * @return najblizszy obiekt Field zawierajacy rosline, lub null jesli nic nie znaleziono
+     */
     private Field findNearsetCrop(int viewRadius){
         Field closestCrop = null;
         int minDistance = Integer.MAX_VALUE;
@@ -153,7 +179,9 @@ public class Pest extends Agent{
         return closestCrop;
     }
 
-    // Usmiercenie przez farmera
+    /**
+     * Usmierca szkodnika (np. w wyniku bezposredniego ataku farmera).
+     */
     public void kill(){
         this.isDead = true;
     }

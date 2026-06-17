@@ -21,13 +21,20 @@ import javafx.scene.paint.Color;
 
 import java.util.List;
 
-// Odpowiada za UI aplikacji
-// Tworzy uklad okna w JavaFX, laduje tekstury, rysuje siatke pol i agentow
-// Aktualizuje statystyki i wykresy
+/**
+ * Odpowiada za UI aplikacji.
+ * Tworzy uklad okna w JavaFX, laduje tekstury, rysuje siatke pol i agentow
+ * oraz aktualizuje statystyki i wykresy.
+ */
 public class SimulationView {
 
+    /** Obiekt Canvas, na ktorym renderowany jest swiat symulacji. */
     private Canvas canvas;
+
+    /** Glowny uklad okna typu BorderPane. */
     private BorderPane mainLayout;
+
+    /** Rozmiar pojedynczej komorki w pikselach. */
     private final int cellSize;
 
     // --------------------------------------------   UI
@@ -80,14 +87,24 @@ public class SimulationView {
     private Image imgPest;
     private Image imgFarmerResting;
 
+    /**
+     * Konstruktor klasy SimulationView. Inicjalizuje tekstury oraz buduje interfejs graficzny.
+     * @param boardWidth szerokosc planszy wyrazona w liczbie komorek
+     * @param boardHeight wysokosc planszy wyrazona w liczbie komorek
+     * @param cellSize rozmiar pojedynczej komorki w pikselach
+     */
     public SimulationView(int boardWidth, int boardHeight, int cellSize) {
         this.cellSize = cellSize;
         loadAllTextures();
         canvas = buildInterface(boardWidth, boardHeight, cellSize);
     }
 
-    // Glowna metoda rysujaca caly swiat symuacji
-    // Czysci ekrna, ansoi plansze i agentow
+    /**
+     * Glowna metoda rysujaca caly swiat symulacji.
+     * Czysci ekran, nanosi plansze (pola) oraz wszystkich aktywnych agentow.
+     * @param board obiekt planszy zawierajacy stan pol
+     * @param agents lista agentow bioracych udzial w symulacji
+     */
     public void render(Board board, List<Agent> agents) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -101,7 +118,13 @@ public class SimulationView {
         drawAgents(agents, gc);
     }
 
-    // Inicjalizuje, pozycjonuje i naklada styl na wsyztskie komponenty graficzne JavaFx
+    /**
+     * Inicjalizuje, pozycjonuje i naklada styl na wszystkie komponenty graficzne JavaFX.
+     * @param boardWidth szerokosc planszy
+     * @param boardHeight wysokosc planszy
+     * @param cellSize rozmiar komorki
+     * @return skonfigurowany obiekt Canvas gotowy do renderowania
+     */
     private Canvas buildInterface(int boardWidth, int boardHeight, int cellSize) {
         mainLayout = new BorderPane();
         mainLayout.setPadding(new Insets(20));
@@ -398,7 +421,9 @@ public class SimulationView {
         return canvas;
     }
 
-    // Bezpiecnzie laduje zasoby graficzne tekstur roslin i agentow
+    /**
+     * Bezpiecznie laduje zasoby graficzne tekstur roslin oraz agentow z folderu resources.
+     */
     private void loadAllTextures() {
         try {
             imgCarrotGrowing = new Image(getClass().getResourceAsStream("/carrot/tile002.png"));
@@ -418,6 +443,11 @@ public class SimulationView {
         }
     }
 
+    /**
+     * Rysuje ikony agentow na planszy w oparciu o ich aktualne wspolrzedne oraz typ.
+     * @param agents lista agentow do narysowania
+     * @param gc kontekst graficzny komponentu Canvas
+     */
     private void drawAgents(List<Agent> agents, GraphicsContext gc) {
         for (Agent a : agents) {
             int posX = a.getX() * cellSize;
@@ -439,7 +469,12 @@ public class SimulationView {
         }
     }
 
-    // Iteruje przez plansze, rysuje kolor podloza, teksture rosliny oraz pestycyd
+    /**
+     * Iteruje przez wszystkie pola planszy, rysuje odpowiedni kolor podloza, teksture rosliny
+     * oraz naklada animacje rozchodzacego sie pestycydu.
+     * @param board obiekt planszy
+     * @param gc kontekst graficzny komponentu Canvas
+     */
     private void drawGridAndFields(Board board, GraphicsContext gc) {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -494,7 +529,16 @@ public class SimulationView {
         }
     }
 
-    // Aktualizuje statystyki nowymi danymi
+    /**
+     * Aktualizuje etykiety tekstowe statystyk nowymi, biezacymi danymi z symulacji.
+     * @param ticks aktualny krok (tick) symulacji
+     * @param crops liczba zebranych plonow
+     * @param pollinated liczba zapylonych roslin
+     * @param planted liczba posadzonych roslin
+     * @param killedByFarmers liczba szkodnikow zabitych przez farmerow
+     * @param killedByPesticide liczba szkodnikow zabitych przez pestycydy
+     * @param pestsBorn liczba narodzonych szkodnikow
+     */
     public void updateStats(int ticks, int crops, int pollinated, int planted, int killedByFarmers, int killedByPesticide, int pestsBorn) {
         lblTicks.setText("Simulation step: " + ticks);
         lblCrops.setText("Harvested crops: " + crops);
@@ -505,40 +549,86 @@ public class SimulationView {
         lblpestsBorn.setText("Pests born: " +  pestsBorn);
     }
 
-    // Wprowadza kolejny punkty danych do wykresu upraw
+    /**
+     * Wprowadza kolejny punkt danych do wykresu historii pokrycia upraw.
+     * Operacja wykonywana jest bezpiecznie w watku JavaFX Application Thread.
+     * @param tick aktualny krok symulacji (os X)
+     * @param cropCount biezaca liczba roslin (os Y)
+     */
     public void addCropDataPoint(int tick, int cropCount) {
         javafx.application.Platform.runLater(() -> {
             cropSeries.getData().add(new XYChart.Data<>(tick, cropCount));
         });
     }
 
-    // Wprowadza kolejny punkty danych do wykresu szkodikow
+    /**
+     * Wprowadza kolejny punkt danych do wykresu historii populacji szkodnikow.
+     * Operacja wykonywana jest bezpiecznie w watku JavaFX Application Thread.
+     * @param tick aktualny krok symulacji (os X)
+     * @param pestCount biezaca populacja szkodnikow (os Y)
+     */
     public void addPestDataPoint(int tick, int pestCount) {
         javafx.application.Platform.runLater(() -> {
             pestSeries.getData().add(new XYChart.Data<>(tick, pestCount));
         });
     }
 
+    /**
+     * Czysci wszystkie serie danych na wykresach upraw oraz szkodnikow.
+     */
     public void clearChart() {
         cropSeries.getData().clear();
         pestSeries.getData().clear();
     }
 
-    // Getters
+    /**
+     * Zwraca glowny uklad BorderPane widoku.
+     * @return glowny layout panelu
+     */
     public BorderPane getMainLayout() { return mainLayout; }
+
+    /** @return przycisk START */
     public Button getBtnStart() { return btnStart; }
+
+    /** @return przycisk PAUZA */
     public Button getBtnPause() { return btnPause; }
+
+    /** @return przycisk spawnu pszczol */
     public Button getBtnSpawnBees() { return btnSpawnBees; }
+
+    /** @return suwak kontroli predkosci */
     public Slider getSpeedSlider() { return speedSlider; }
+
+    /** @return pole tekstowe liczby pszczol */
     public TextField getTfBeeCount() { return tfBeeCount; }
+
+    /** @return pole tekstowe liczby szkodnikow */
     public TextField getTfPestCount() { return tfPestCount; }
+
+    /** @return przycisk spawnu szkodnikow */
     public Button getBtnSpawnPest() { return btnSpawnPest; }
+
+    /** @return pole tekstowe liczby farmerow */
     public TextField getTfFarmerCount() { return tfFarmerCount; }
+
+    /** @return przycisk spawnu farmerow */
     public Button getBtnSpawnFarmer() { return btnSpawnFarmer; }
+
+    /** @return pole tekstowe procentowego pokrycia uprawami */
     public TextField getTfCropPercentage() { return tfCropPercentage; }
+
+    /** @return przycisk generowania roslin na mapie */
     public Button getBtnGenerateCrops() { return btnGenerateCrops; }
+
+    /** @return pole tekstowe czasu oczekiwania na pestycyd */
     public TextField getTfPesticideCooldown() { return tfPesticideCooldown; }
+
+    /** @return pole tekstowe czasu trwania pestycydu */
     public TextField getTfPesticideDuration() { return tfPesticideDuration; }
+
+    /** @return przycisk RESET */
     public Button getBtnReset() { return btnReset; }
+
+    /** @return CheckBox przyzwolenia na uzycie pestycydow */
     public CheckBox getCbAllowPesticide() { return cbAllowPesticide; }
 }
