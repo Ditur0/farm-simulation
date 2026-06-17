@@ -42,6 +42,40 @@ Wszystkie kluczowe zmienne środowiskowe, fizyka świata oraz zachowania agentó
 | `CARROT` / `POTATO` / `WHEAT` | 12 / 18 / 25 | Bazowy czas wzrostu (w taktach) dla poszczególnych gatunków roślin. |
 
 ---
+## 🏁 Scenariusze Symulacji: Osiągnij Równowagę
+
+Symulacja **EcoFarm** to dynamiczny ekosystem, w którym wynik zależy od Twojej strategii. Poniżej przedstawiamy trzy główne scenariusze, które możesz wywołać, modyfikując ustawienia początkowe w panelu sterowania.
+
+### 🏆 Wyniki Symulacji
+
+| Stan końcowy | Charakterystyka | Jak to rozpoznać w panelu? |
+| :--- | :--- | :--- |
+| **Zwycięstwo Farmera** | Ekosystem pod kontrolą rolnika. | Liczba szkodników spada do minimum; wysoki wskaźnik `Crops Harvested`. |
+| **Dominacja Szkodników** | Plaga utrudniająca rolnictwo. | Wysoki wskaźnik populacji szkodników przy jednoczesnym niskim wskaźniku `Zalesienia` na planszy. |
+| **Równowaga (Balans)** | Symbioza; populacje oscylują wokół stałego poziomu. | Wykresy populacji szkodników i plonów tworzą stabilne, powtarzalne wzorce (oscylacje). |
+
+---
+
+### ⚙️ Proponowane konfiguracje startowe
+
+Aby osiągnąć wybrany scenariusz, ustaw następujące parametry w panelu bocznym przed startem symulacji:
+
+#### 🟢 Scenariusz: Zwycięstwo Farmera
+* **Agenci:** Farmerzy: `10` | Szkodniki: `5` | Pszczoły: `5`
+* **Pestycydy:** Aktywne | `Cooldown`: 100 | `Duration`: 20
+* **Mapa:** Zalesienie: `30%`
+
+#### 🔴 Scenariusz: Dominacja Szkodników
+* **Agenci:** Farmerzy: `5` | Szkodniki: `10` | Pszczoły: `5`
+* **Pestycydy:** Wyłączone
+* **Mapa:** Zalesienie: `50%`
+
+#### 🔵 Scenariusz: Ekosystem Zrównoważony
+* **Agenci:** Farmerzy: `5` | Szkodniki: `5` | Pszczoły: `5`
+* **Pestycydy:** Aktywne | `Cooldown`: 180 | `Duration`: 10
+* **Mapa:** Zalesienie: `30%`
+
+---
 
 ## 🚀 Szybki Start (Quick Start)
 
