@@ -1,4 +1,4 @@
-# 🌾 EcoFarm: Równowaga Plonów (EcoFarm Simulator)
+# 🌾 EcoFarm: Równowaga Plonów (Farm Simulator)
 
 Projekt to obiektowa symulacja ekosystemu rolniczego oparta na siatce o strukturze torusa (krawędzie planszy zawijają się). Symulacja analizuje dynamiczne interakcje pomiędzy rolnikami, pszczołami, uprawami oraz szkodnikami, które walczą o przetrwanie i zasoby.
 
@@ -66,3 +66,21 @@ git clone https://github.com/Ditur0/farm-simulation.git
 ```bash
 mvn compile exec:java -Dexec.mainClass="com.ditur.Main"
 ```
+### 📐 Diagram Klas
+Poniższy diagram przedstawia strukturę obiektową projektu:
+
+![Diagram Klas EcoFarm](src/main/resources/diagramy/diagram-klas.svg)
+
+---
+
+### 🌐 Diagram Instancji
+Diagram obrazujący przykładowy stan świata i relacje przestrzenne:
+
+![Diagram Instancji EcoFarm](src/main/resources/diagramy/diagram-obiektow.svg)
+
+---
+
+### 🔄 Diagram Stanów
+Wizualizacja cyklu życia symulacji:
+
+![Diagram Stanów Uprawy EcoFarm](src/main/resources/diagramy/diagram-stanow.svg)
