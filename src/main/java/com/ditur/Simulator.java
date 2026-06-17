@@ -11,6 +11,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +28,7 @@ public class Simulator extends Application {
     // Konfiguracja renderowania i czasu
     private static final int CELL_SIZE = Settings.CELL_SIZE; // Size of one field in pixels
     private static final double MAX_DELAY_OFFSET = 1100.0;
+    private static final String FILE_PATH = "simulation_stats.txt";
 
     // Obiekty symulacji
     private Board board;
@@ -56,6 +61,7 @@ public class Simulator extends Application {
     @Override
     public void start(Stage stage) {
         initSimulation();
+        prepareOutputFile();
 
         // Tworzenie planszy i poczatkowe zalesienie
         board = new Board(Settings.BOARD_WIDTH, Settings.BOARD_HEIGHT);
@@ -84,6 +90,32 @@ public class Simulator extends Application {
         agents = new ArrayList<>();
         random = new Random();
         cropGenerator = new CropGenerator();
+    }
+
+    private void prepareOutputFile() {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(FILE_PATH, false)))) {
+            writer.println("Tick;Harvested;Pollinated;Planted;CurrentPlanted;CurrentPests;KilledByFarmers;KilledByPesticide;PestsBorn");
+        } catch (IOException e) {
+            System.err.println("Error while init file: " + e.getMessage());
+        }
+    }
+
+    private void saveNumbersToFile(int currentPlantedCrops, long currentPestCount) {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(FILE_PATH, true)))) {
+            writer.printf("%d;%d;%d;%d;%d;%d;%d;%d;%d%n",
+                    tickCount,
+                    harvestedCrops,
+                    pollinatedCrops,
+                    plantedCrops,
+                    currentPlantedCrops,
+                    currentPestCount,
+                    pestsKilledByFarmers,
+                    pestsKilledByPesticide,
+                    pestsBorn
+            );
+        } catch (IOException e) {
+            System.err.println("Blad podczas zapisu liczb do pliku: " + e.getMessage());
+        }
     }
 
     /**
@@ -298,6 +330,8 @@ public class Simulator extends Application {
         long currentPestCount = agents.stream().filter(a -> a instanceof Pest).count();
         view.addPestDataPoint(tickCount, (int) currentPestCount);
 
+        saveNumbersToFile(currentPlantedCrops, currentPestCount);
+
         // Przerysowanie calej planszy
         view.render(board, agents);
     }
@@ -345,6 +379,7 @@ public class Simulator extends Application {
         pestsKilledByPesticide = 0;
         pestsBorn = 0;
 
+        prepareOutputFile();
         view.updateStats(tickCount, harvestedCrops, pollinatedCrops, plantedCrops, pestsKilledByFarmers, pestsKilledByPesticide, pestsBorn);
         agents.clear(); // Czyszczenie listy agentow
 
