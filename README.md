@@ -51,7 +51,7 @@ Symulacja **EcoFarm** to dynamiczny ekosystem, w którym wynik zależy od Twojej
 | Stan końcowy | Charakterystyka | Jak to rozpoznać w panelu? |
 | :--- | :--- | :--- |
 | **Zwycięstwo Farmera** | Ekosystem pod kontrolą rolnika. | Liczba szkodników spada do minimum; wysoki wskaźnik `Crops Harvested`. |
-| **Dominacja Szkodników** | Plaga utrudniająca rolnictwo. | Wysoki wskaźnik populacji szkodników przy jednoczesnym niskim wskaźniku `Zalesienia` na planszy. |
+| **Dominacja Szkodników** | Plaga utrudniająca rolnictwo. | Wysoki wskaźnik populacji szkodników przy jednoczesnym niskim wskaźniku `Crops Coverage` na planszy. |
 | **Równowaga (Balans)** | Symbioza; populacje oscylują wokół stałego poziomu. | Wykresy populacji szkodników i plonów tworzą stabilne, powtarzalne wzorce (oscylacje). |
 
 ---
