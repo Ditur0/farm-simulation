@@ -62,4 +62,7 @@ Jeśli masz zainstalowane środowisko JDK oraz narzędzie Maven i chcesz uruchom
 ```bash
 git clone https://github.com/Ditur0/farm-simulation.git
 ```
-2. Wejdź do głównego folderu z kodem i uruchom klase Main.java
+2. Uruchom prgram przez polecenie:
+```bash
+mvn compile exec:java -Dexec.mainClass="com.ditur.Main"
+```
