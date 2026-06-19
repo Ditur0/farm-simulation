@@ -175,7 +175,7 @@ public class Field {
      * Sprawdza, czy flagowy stan pestycydu jest aktywny.
      * @return stan isPesticideActive
      */
-    public boolean isPesticideActive() { return isPesticideActive; }
+    public boolean isPesticideActive() { return pesticideTicksLeft > 0; }
 
     /**
      * Pobiera aktualny typ rosliny znajdujacej sie na polu.

@@ -95,8 +95,14 @@ git clone https://github.com/Ditur0/farm-simulation.git
 ```
 2. Uruchom prgram przez polecenie:
 ```bash
+Powershell
+mvn compile exec:java "-Dexec.mainClass=com.ditur.Main"
+```
+```bash
+Windows cmd / MacOS
 mvn compile exec:java -Dexec.mainClass="com.ditur.Main"
 ```
+
 ### 📐 Diagram Klas
 Poniższy diagram przedstawia strukturę obiektową projektu:
 

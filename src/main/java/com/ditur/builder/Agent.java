@@ -96,4 +96,6 @@ public abstract class Agent {
      * @return wartosc Y
      */
     public int getY() { return y; }
+
+    public int getEnergy() { return this.energy; }
 }
